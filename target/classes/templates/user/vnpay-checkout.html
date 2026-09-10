@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Thanh toán VNPay | DoDo Store</title></head>
+<body style="font-family:Arial;background:#f5f5f5;color:#171717"><main style="max-width:620px;margin:70px auto;padding:32px;background:white">
+<h1>Thanh toán VNPay Sandbox</h1><p>Đơn hàng sẽ được tạo từ giỏ hàng và địa chỉ bạn đã chọn. Số tiền được tính lại trên hệ thống.</p>
+<p>Đây là môi trường thử nghiệm. Không nhập thông tin thẻ thật.</p>
+<form th:action="@{/payment/vnpay/create}" method="post" onsubmit="this.querySelector('button').disabled=true">
+<input type="hidden" name="addressId" th:value="${addressId}"><input type="hidden" name="requestKey" th:value="${requestKey}">
+<button style="background:#111;color:white;border:0;padding:15px 24px;cursor:pointer">Tiếp tục đến VNPay</button></form>
+<p><a th:href="@{/user/cart}">Quay lại giỏ hàng</a></p></main></body></html>
