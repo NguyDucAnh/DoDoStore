@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,10 +16,15 @@
     />
     <style>
       body {
-        background-color: #f8f9fa;
+        background-color: #f7f7f7;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         padding: 20px;
       }
+      .history-back-home {
+        width: 100%;
+        padding: 16px 20px;
+        text-align: left;
+}
 
       .order-card {
         background: white;
@@ -36,7 +41,7 @@
       }
 
       .order-header {
-        background: #f8f9fa;
+        background: #f7f7f7;
         padding: 15px;
         border-radius: 15px 15px 0 0;
         border-bottom: 2px solid #eee;
@@ -55,7 +60,7 @@
       }
 
       .product-item:hover {
-        background-color: #f8f9fa;
+        background-color: #f7f7f7;
       }
 
       .product-image {
@@ -72,12 +77,12 @@
 
       .product-name h6 {
         font-weight: 600;
-        color: #2c3e50;
+        color: #202020;
         margin-bottom: 5px;
       }
 
       .price-info {
-        color: #e74c3c;
+        color: #d30000;
         font-weight: 600;
       }
 
@@ -90,7 +95,7 @@
       }
 
       .page-title {
-        color: #3498db;
+        color: #111111;
         margin-bottom: 30px;
         text-align: center;
         font-size: 28px;
@@ -101,7 +106,7 @@
         display: block;
         margin: 20px auto;
         padding: 12px 25px;
-        background-color: #3498db;
+        background-color: #111111;
         color: white;
         border: none;
         border-radius: 25px;
@@ -112,9 +117,9 @@
       }
 
       .back-button:hover {
-        background-color: #2980b9;
+        background-color: #333333;
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        box-shadow: 0 5px 15px rgba(17, 17, 17, 0.3);
         color: white;
         text-decoration: none;
       }
@@ -127,7 +132,7 @@
 
       .empty-history i {
         font-size: 4rem;
-        color: #bdc3c7;
+        color: #767676;
         margin-bottom: 20px;
       }
 
@@ -159,8 +164,29 @@
           height: 60px;
         }
       }
+      .receipt-actions { display: flex; justify-content: flex-end; margin-top: 18px; }
+      .receipt-dialog { border: 0; border-radius: 16px; padding: 28px;
+        width: min(440px, calc(100% - 32px)); color: #171717;
+        box-shadow: 0 20px 60px rgba(0,0,0,.2); }
+      .receipt-dialog::backdrop { background: rgba(0,0,0,.45); }
+      .receipt-dialog h2 { font-size: 21px; margin-bottom: 14px; }
+      .receipt-dialog p { line-height: 1.6; }
+      .receipt-dialog-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 22px; }
+      .receipt-dialog-actions button { min-width: 88px; }
+      .order-summary { flex-wrap: wrap; gap: 8px; }
+      .receipt-actions {gap:12px;align-items:center;flex-wrap:wrap}
+      .order-view-btn {display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border:1px solid #171717;border-radius:7px;color:#171717;text-decoration:none;font-weight:600;background:#fff}
+      .order-view-btn:hover {background:#171717;color:#fff}
+      .order-view-btn:focus-visible {outline:3px solid #999;outline-offset:3px}
+      .history-order-status{display:inline-block;padding:5px 10px;border-radius:16px;background:#f3f4f6;color:#374151;font-size:13px;font-weight:600}
+      .history-order-status[data-status="Dang_Giao"]{background:#eff6ff;color:#1d4ed8}
+      .history-order-status[data-status="Da_Giao"]{background:#f0fdf4;color:#166534}
+      .history-order-status[data-status="Cho_Thanh_Toan"]{background:#fffbeb;color:#92400e}
+      .history-order-status[data-status="Da_Huy"]{background:#fef2f2;color:#b91c1c}
     </style>
-  </head>
+      <link rel="stylesheet" th:href="@{/css/web/torano-theme.css}" href="/css/web/torano-theme.css" />
+    <link rel="stylesheet" th:href="@{/css/web/chatbot.css}" />
+</head>
   <body>
     <div class="container">
       <!-- Page Title -->
@@ -168,6 +194,13 @@
         <i class="fas fa-history me-2"></i>
         Lịch Sử Mua Hàng
       </h1>
+        <!--Back button -->
+        <a th:href="@{/home}" class="btn btn-dark mb-4">
+            <i class="fas fa-arrow-left"></i> Quay lại trang chủ
+        </a>
+
+      <div th:if="${successMessage}" th:text="${successMessage}" class="alert alert-success" role="status"></div>
+      <div th:if="${errorMessage}" th:text="${errorMessage}" class="alert alert-danger" role="alert"></div>
 
       <!-- Orders List -->
       <div class="orders-container">
@@ -181,7 +214,7 @@
                 Đơn hàng #<span th:text="${order.id}">123</span>
               </h5>
               <small class="text-muted">
-                Ngày đặt: <span th:text="${order.date}"></span>
+                Ngày đặt: <span th:text="${order.formattedDate}"></span>
               </small>
             </div>
           </div>
@@ -196,6 +229,8 @@
                   <h6 class="mb-0" th:text="${item.product.name}">
                     Tên sản phẩm
                   </h6>
+                  <small th:text="'Size: ' + ${item.size ?: 'Không ghi nhận'}"></small>
+<small th:text="'Màu: ' + ${item.color ?: 'Chưa ghi nhận'}"></small>
                 </div>
                 <div class="text-center" style="width: 15%">
                   <span>Số lượng: </span>
@@ -209,7 +244,7 @@
                   <span>Giảm: </span>
                   <span
                     class="text-danger"
-                    th:text="${item.discount} + ' Vnđ'"
+                    th:text="${item.discount} + '%'"
                   ></span>
                 </div>
                 <div class="text-end" style="width: 20%">
@@ -217,6 +252,18 @@
                   <span class="price-info" th:text="${item.total} + ' Vnđ'"></span>
                 </div>
               </div>
+            </div>
+
+            <div class="receipt-actions">
+              <a th:if="${order.cartDraft != true}" th:href="@{/user/orders/{id}(id=${order.id})}" class="order-view-btn"><i class="fas fa-eye" aria-hidden="true"></i> Xem</a>
+              <form th:if="${order.cartDraft != true and order.status == T(com.dodostore.dodostore.enums.StatusOrderEnum).Dang_Giao}"
+                    th:action="@{/user/orders/{id}/received(id=${order.id})}" method="post">
+                <button type="button" class="btn btn-dark receipt-open" th:attr="data-order-id=${order.id}">
+                  <i class="fas fa-box-open me-2" aria-hidden="true"></i>Đã nhận được hàng
+                </button>
+              </form>
+              <span th:if="${order.status == T(com.dodostore.dodostore.enums.StatusOrderEnum).Da_Giao}"
+                    class="badge bg-success">Đã giao</span>
             </div>
 
             <!-- Order Summary -->
@@ -228,7 +275,7 @@
               <span> | </span>
               <div>
                 <strong>Trạng Thái: </strong>
-                <span class="price-info" th:text="${order.status}"></span>
+                <span class="history-order-status" th:attr="data-status=${order.status}" th:text="${order.status != null ? order.status.displayName : 'Chưa xác định'}"></span>
               </div>
             </div>
           </div>
@@ -241,14 +288,19 @@
           <p>Hãy mua sắm để có những trải nghiệm tuyệt vời với DoDo Store</p>
         </div>
       </div>
-
-      <!-- Back Button -->
-      <a href="/home" class="back-button">
-        <i class="fas fa-arrow-left me-2"></i>Quay lại trang chủ
-      </a>
     </div>
 
+    <dialog id="receiptDialog" class="receipt-dialog" aria-labelledby="receiptTitle" aria-describedby="receiptDescription">
+      <h2 id="receiptTitle">Xác nhận nhận hàng</h2>
+      <p id="receiptDescription">Bạn có chắc đã nhận được hàng của đơn #<span id="receiptOrderId"></span> không?</p>
+      <div class="receipt-dialog-actions">
+        <button type="button" id="receiptNo" class="btn btn-outline-dark" autofocus>Không</button>
+        <button type="button" id="receiptYes" class="btn btn-dark">Có</button>
+      </div>
+    </dialog>
+    <script th:src="@{/js/order-received.js}" defer></script>
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+      <th:block th:replace="~{fragments/chatbot :: widget}"></th:block>
+</body>
 </html>

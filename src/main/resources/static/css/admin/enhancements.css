@@ -1,0 +1,178 @@
+/* Shared styling for the newly added admin tools. */
+.enhancement-panel{box-sizing:border-box;min-width:0;margin:24px 0;padding:24px;border:1px solid #e3e5e8;border-radius:14px;background:#fff;box-shadow:0 3px 14px #16202b06}
+.enhancement-heading{margin-bottom:20px}.enhancement-heading h5{font-size:20px;font-weight:700;color:#151719;margin:6px 0 0}.enhancement-eyebrow{font-size:11px;font-weight:700;letter-spacing:1.8px;color:#777}
+.enhancement-toolbar{display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;margin:18px 0 20px}.enhancement-toolbar label{display:flex;flex-direction:column;gap:8px;margin:0;color:#4b5157;font-size:13px;font-weight:600;flex:1 1 190px}
+.enhancement-toolbar input,.enhancement-toolbar select,.sale-editor input,.size-stock-editor input.stock-input{box-sizing:border-box;min-width:0;max-width:100%;min-height:44px;border:1px solid #d9dde1;border-radius:8px;background:#fafbfc;color:#1a1c1e;font:inherit;padding:10px 12px;outline:none;transition:border-color .2s,box-shadow .2s}
+.enhancement-toolbar input:focus,.enhancement-toolbar select:focus,.sale-editor input:focus,.size-stock-editor input.stock-input:focus{border-color:#333;background:#fff;box-shadow:0 0 0 3px #1111110c}
+.enhancement-toolbar button{width:auto;min-height:44px;padding:10px 24px;border:1px solid #111;border-radius:8px;background:#111;color:#fff;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .2s,transform .2s}.enhancement-toolbar button:hover{background:#333;transform:translateY(-1px)}
+.enhancement-toolbar button:focus-visible{outline:2px solid #111;outline-offset:3px}.enhancement-metric{padding:18px 20px;background:#f5f6f7;border:1px solid #e9ebed;border-radius:10px;color:#5e646b;font-size:14px;line-height:1.8}.enhancement-metric strong{color:#141617;font-size:22px;margin-left:8px;font-weight:700}.enhancement-hint,.enhancement-panel small,.sale-editor p{color:#757b81;font-size:12px;line-height:1.7;margin:10px 0 0}.enhancement-chart{height:320px;margin-top:24px;position:relative}
+.order-filter{align-items:center;gap:14px}.order-filter>label{flex:0 0 auto;font-size:14px}.order-filter>select{flex:1 1 220px;max-width:360px}.order-filter button{margin-left:auto}.order-summary{margin:0 0 20px}.enhancement-empty{text-align:center;color:#737980;background:#fafafa;border:1px dashed #d6d9dc;border-radius:10px;padding:30px;margin:20px 0}
+fieldset.enhancement-panel{width:100%;margin:18px 0;grid-column:1/-1}.enhancement-panel legend{width:auto;float:none;padding:0 8px;margin:0 0 14px;font-size:16px;font-weight:700;color:#181b1e;line-height:1.4}.enhancement-panel legend i{font-size:14px;margin-right:6px;color:#626970}
+.size-stock-editor [data-size-stock-rows]{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:12px;margin:4px 0 14px}.size-stock-editor label.stock-tile{display:flex;flex-direction:column;align-items:stretch;gap:10px;background:#f7f8f9;border:1px solid #e7e9ec;border-radius:10px;padding:12px;margin:0;font-size:13px;font-weight:700;text-align:center}.size-stock-editor input.stock-input{width:100%;background:#fff;text-align:center;font-size:16px;font-weight:600}
+.sale-editor{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.sale-editor label{display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:600;color:#5b6268;margin:0;min-width:0}.sale-editor input{width:100%;font-size:13px}.sale-editor p{grid-column:1/-1;margin:0;padding:12px 14px;background:#faf7f1;border-radius:8px;color:#867044}.enhancement-notice{padding:12px 14px;background:#fff5e6;color:#886520;border:1px solid #f1ddb9;border-radius:8px;font-size:13px;line-height:1.6}
+input[data-stock-total]{background:#f2f4f6!important;color:#646a70!important;cursor:default}
+@media(max-width:1100px){.sale-editor{grid-template-columns:1fr}.enhancement-toolbar label{flex-basis:160px}}
+@media(max-width:600px){.enhancement-panel{padding:16px;border-radius:10px}.enhancement-toolbar{gap:12px}.enhancement-toolbar label,.enhancement-toolbar button,.order-filter>select{width:100%;flex-basis:100%;max-width:none}.order-filter>label{flex-basis:100%}.enhancement-chart{height:250px}.enhancement-metric strong{display:block;margin:4px 0 0}.enhancement-heading h5{font-size:18px}}
+
+.variant-stock-group{padding:16px;border:1px solid #ddd;border-radius:8px;background:#fafafa;margin:12px 0;width:100%}.variant-stock-group h4{font-size:15px;margin:0 0 12px}.variant-stock-grid{display:flex;flex-wrap:wrap;gap:12px}.variant-stock-grid .stock-tile{min-width:90px}
+[data-size-stock-rows]{display:block!important}
+/* Khung thống kê và bộ lọc đơn hàng */
+.revenue-panel,
+.order-filter {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+}
+
+/* Bộ lọc ngày */
+.revenue-panel .enhancement-toolbar {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.revenue-panel .enhancement-toolbar > label {
+    display: flex;
+    flex: 1 1 200px;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* Ô ngày và danh sách trạng thái */
+.revenue-panel .enhancement-toolbar input:not([type="hidden"]),
+.order-filter select {
+    width: 100%;
+    height: 46px;
+    box-sizing: border-box;
+    padding: 0 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background-color: #fafafa;
+    color: #111827;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s, background .2s;
+}
+
+.revenue-panel .enhancement-toolbar input:focus,
+.order-filter select:focus {
+    background-color: #fff;
+    border-color: #333;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.07);
+}
+
+/* Nút thống kê và lọc */
+.revenue-panel .enhancement-toolbar button,
+.order-filter button {
+    height: 46px;
+    padding: 0 24px;
+    border: 1px solid #171717;
+    border-radius: 8px;
+    background: #171717;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background .2s, box-shadow .2s;
+}
+
+.revenue-panel .enhancement-toolbar button:hover,
+.order-filter button:hover {
+    background: #333;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+/* Bộ lọc trạng thái: nhãn trên, ô chọn và nút phía dưới */
+form.order-filter {
+    display: grid;
+    grid-template-columns: minmax(180px, 320px) max-content;
+    align-items: end;
+    gap: 10px 16px;
+    margin-bottom: 20px;
+}
+
+.order-filter > label {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.order-filter select {
+    appearance: none;
+    padding-right: 40px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+}
+
+/* Lịch chọn ngày Flatpickr */
+.flatpickr-calendar {
+    font-family: inherit;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.14);
+    overflow: hidden;
+}
+
+.flatpickr-months,
+.flatpickr-weekdays {
+    background: #f8f9fa;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.flatpickr-day {
+    border-radius: 8px;
+}
+
+.flatpickr-day.today {
+    border-color: #171717;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover,
+.flatpickr-day.selected:focus {
+    background: #171717;
+    border-color: #171717;
+    color: #fff;
+}
+
+/* Màn hình nhỏ */
+@media (max-width: 576px) {
+    .revenue-panel,
+    .order-filter {
+        padding: 16px;
+    }
+
+    .revenue-panel .enhancement-toolbar > label,
+    .revenue-panel .enhancement-toolbar button {
+        width: 100%;
+        flex-basis: 100%;
+    }
+
+    form.order-filter {
+        grid-template-columns: 1fr;
+    }
+
+    .order-filter button {
+        width: 100%;
+    }
+}

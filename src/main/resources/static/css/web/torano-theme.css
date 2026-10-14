@@ -1,0 +1,65 @@
+/* DoDo Store customer palette, inspired by Torano. Load after page styles. */
+:root {
+  --store-ink: #111111;
+  --store-muted: #666666;
+  --store-paper: #ffffff;
+  --store-surface: #f7f7f7;
+  --store-border: #e5e5e5;
+  --store-sale: #d30000;
+}
+body { color: var(--store-ink); background-color: var(--store-paper); }
+a { color: var(--store-ink); }
+a:hover { color: #444444; }
+.header { background: var(--store-paper) !important; border-bottom: 1px solid var(--store-border); box-shadow: none; }
+.header .header-title, .header h1, .header h2 { color: var(--store-ink) !important; text-shadow: none; }
+.header .logo { border-color: var(--store-border); box-shadow: none; }
+.header .form-control { border: 1px solid var(--store-border); background: var(--store-surface); color: var(--store-ink); }
+.header a:not(.btn):not(.btn-custom):not(.dropdown-item), .header .text-white { color: var(--store-ink) !important; }
+.nav-container { background: white; box-shadow: none; border-bottom: 1px solid var(--store-border); }
+.nav-pills .nav-link { color: var(--store-ink); border-radius: 2px; }
+.nav-pills .nav-link.active, .nav-pills .nav-link:hover { background: var(--store-ink); color: white !important; box-shadow: none; }
+.btn-primary, .btn-custom, .checkout-btn, .add-to-cart, .add-to-cart-btn, .menu-toggle {
+  background: var(--store-ink); border-color: var(--store-ink); color: white;
+}
+.btn-primary:hover, .btn-primary:focus, .btn-custom:hover, .checkout-btn:hover,
+.add-to-cart:hover, .add-to-cart-btn:hover, .menu-toggle:hover {
+  background: #333333; border-color: #333333; color: white;
+}
+.btn-outline-primary { color: var(--store-ink); border-color: var(--store-ink); }
+.btn-outline-primary:hover, .btn-outline-primary.active { background: var(--store-ink); border-color: var(--store-ink); color: white; }
+.text-primary { color: var(--store-ink) !important; }
+.bg-primary, .badge-primary { background-color: var(--store-ink) !important; color: white; }
+.badge-danger, .bg-danger { background-color: var(--store-sale) !important; color: white; }
+.text-danger { color: var(--store-sale) !important; }
+.dropdown-item, .dropdown-item i { color: var(--store-ink); }
+.dropdown-item:hover, .dropdown-item:focus { color: var(--store-ink); background: var(--store-surface); }
+.dropdown-item.active, .dropdown-item:active { color: white; background: var(--store-ink); }
+.dropdown-item:active i { color: white; }
+.page-link { color: var(--store-ink); border-color: var(--store-border); }
+.page-item.active .page-link { background: var(--store-ink); border-color: var(--store-ink); color: white; }
+.page-link:hover { background: #eeeeee; color: var(--store-ink); border-color: var(--store-border); }
+.form-control:focus, .custom-select:focus { border-color: var(--store-ink); box-shadow: 0 0 0 3px rgba(17,17,17,.12); }
+input[type=radio], input[type=checkbox] { accent-color: var(--store-ink); }
+.custom-control-input:checked ~ .custom-control-label::before { background-color: var(--store-ink); border-color: var(--store-ink); }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--store-ink); outline-offset: 3px; }
+.quantity-btn:disabled { background: #e5e5e5; color: #767676; cursor: not-allowed; transform: none; }
+.footer { background: #202020; color: #eeeeee; }
+.footer a { color: #eeeeee; }
+.footer a:hover { color: white; }
+.footer h1, .footer h2, .footer h3, .footer h4, .footer h5, .footer i { color: white; }
+
+/* Price: original price + promotion stay on one line, current price below. */
+.store-price { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; max-width: 100%; }
+.store-price-top { display: inline-flex; flex-flow: row nowrap; align-items: center; gap: 8px; white-space: nowrap; }
+.store-price-original { color: #666666; font-size: 14px; font-weight: 400; white-space: nowrap; }
+.store-price-discount { display: inline-block; flex-shrink: 0; padding: 3px 6px; background: #fff0f0; color: #b00000; border: 1px solid #f1cccc; border-radius: 3px; font-size: 12px; font-weight: 600; line-height: 1.3; white-space: nowrap; }
+.store-price-current { display: block; margin: 0; color: var(--store-sale); font-size: 20px; font-weight: 700; line-height: 1.3; white-space: nowrap; }
+.store-price-actions { flex-wrap: wrap; gap: 12px; }
+.store-price-actions > .btn { flex-shrink: 0; }
+.store-price-detail { margin: 15px 0; gap: 8px; }
+.store-price-detail .store-price-original { font-size: 18px; }
+.store-price-detail .store-price-current { font-size: 28px; }
+@media (max-width: 575px) {
+  .store-price-detail .store-price-original { font-size: 16px; }
+  .store-price-detail .store-price-current { font-size: 24px; }
+}

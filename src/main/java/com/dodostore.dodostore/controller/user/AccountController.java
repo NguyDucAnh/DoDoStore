@@ -19,6 +19,11 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping("/user")
 public class AccountController {   
+    @ModelAttribute("vnpayRequestKey")
+    public String vnpayRequestKey() {
+        return java.util.UUID.randomUUID().toString();
+    }
+
     @Autowired
     private GetUserAuthentication getUserAuthentication;
 
@@ -86,10 +91,35 @@ public class AccountController {
                 .addObject("user", user);
     }
 
+    @PostMapping("/orders/{orderId}/received")
+    public String confirmReceived(@PathVariable Long orderId,
+            org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        UserEntity user = getUserAuthentication.getUser();
+        if (user == null) return "redirect:/login";
+        try {
+            orderService.confirmReceived(user.getId(), orderId);
+            redirectAttributes.addFlashAttribute("successMessage", "Đã xác nhận nhận hàng. Trạng thái đơn hàng: Đã giao.");
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        }
+        return "redirect:/user/history";
+    }
+
+    @Autowired
+    private com.dodostore.dodostore.service.impl.CustomerOrderDetailService customerOrderDetails;
+
+    @GetMapping("/orders/{orderId}")
+    public ModelAndView orderDetail(@PathVariable Long orderId) {
+        UserEntity user=getUserAuthentication.getUser();
+        if(user==null) return new ModelAndView("redirect:/login");
+        return new ModelAndView("user/order-detail").addObject("order",customerOrderDetails.view(user.getId(),orderId)).addObject("user",user);
+    }
+
     @GetMapping("/history")
     public ModelAndView historyBuyProduct(){
         UserEntity user = getUserAuthentication.getUser();
         
+        if (user == null) return new ModelAndView("redirect:/login");
         return new ModelAndView("/user/history")
                 .addObject("orders", orderService.historyBuy(user.getId()));
     }

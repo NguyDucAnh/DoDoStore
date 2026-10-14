@@ -15,13 +15,13 @@
     <style>
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #2c3e50, #3498db);
+        background: #111111;
         height: 100vh;
         margin: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #2c3e50;
+        color: #202020;
       }
 
       .error-container {
@@ -36,7 +36,7 @@
 
       .error-icon {
         font-size: 80px;
-        color: #e74c3c;
+        color: #d30000;
         margin-bottom: 20px;
       }
 
@@ -44,18 +44,18 @@
         font-size: 24px;
         font-weight: 600;
         margin-bottom: 15px;
-        color: #2c3e50;
+        color: #202020;
       }
 
       .error-message {
         font-size: 16px;
-        color: #7f8c8d;
+        color: #666666;
         margin-bottom: 30px;
         line-height: 1.6;
       }
 
       .home-button {
-        background: #3498db;
+        background: #111111;
         color: white;
         text-decoration: none;
         padding: 12px 30px;
@@ -66,9 +66,9 @@
       }
 
       .home-button:hover {
-        background: #2980b9;
+        background: #333333;
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        box-shadow: 0 5px 15px rgba(17, 17, 17, 0.3);
         color: white;
         text-decoration: none;
       }
@@ -94,8 +94,17 @@
         animation: shake 0.5s ease-in-out;
       }
     </style>
-  </head>
-  <body>
+      <link rel="stylesheet" th:href="@{/css/web/torano-theme.css}" href="/css/web/torano-theme.css" />
+    <link rel="stylesheet" th:href="@{/css/web/chatbot.css}" />
+<link rel="stylesheet" href="/css/web/storefront-header.css" th:href="@{/css/web/storefront-header.css}" />
+<link rel="stylesheet" href="/css/web/header.css" />
+<link rel="stylesheet" href="/css/web/nav.css" />
+<link rel="stylesheet" href="/css/web/torano-theme.css" />
+<link rel="stylesheet" href="/css/web/enhancements.css" />
+</head>
+  <body class="dodo-page dodo-auth">
+<div th:replace="~{fragments/storefront-header :: header}"></div>
+
     <div class="error-container">
       <i class="fas fa-exclamation-circle error-icon"></i>
       <h1 class="error-title">Không có quyền truy cập</h1>
@@ -108,5 +117,6 @@
         Quay lại trang chủ
       </a>
     </div>
-  </body>
+      <th:block th:replace="~{fragments/chatbot :: widget}"></th:block>
+</body>
 </html>

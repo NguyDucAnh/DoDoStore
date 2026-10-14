@@ -275,34 +275,6 @@ function submitCreateForm(event) {
     return true;
 }
 
-// Excel upload functionality
-function submitExcelForm(event) {
-    const fileInput = document.getElementById('excelFile');
-    const file = fileInput.files[0];
-
-    if (!file) {
-        showNotification('Vui lòng chọn file Excel!', 'error');
-        event.preventDefault();
-        return false;
-    }
-
-    // Validate file type
-    const allowedTypes = [
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'application/vnd.ms-excel'
-    ];
-
-    if (!allowedTypes.includes(file.type)) {
-        showNotification('Chỉ cho phép file Excel (.xlsx, .xls)!', 'error');
-        event.preventDefault();
-        return false;
-    }
-
-    // Show loading
-    showNotification('Đang xử lý file Excel...', 'info');
-    return true;
-}
-
 // Notification system
 function showNotification(message, type = 'info') {
     // Remove existing notifications
@@ -664,10 +636,6 @@ window.onload = function() {
         });
     }
 
-    const excelForm = document.querySelector('form[action*="upload"]');
-    if (excelForm) {
-        excelForm.addEventListener('submit', submitExcelForm);
-    }
 
     // Add keyboard shortcuts
     document.addEventListener('keydown', function(event) {

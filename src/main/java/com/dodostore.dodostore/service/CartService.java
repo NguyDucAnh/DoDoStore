@@ -14,14 +14,16 @@ public interface CartService {
     Long getCountByUserId(Long userId);
 
     // Add Product to Cart
-    boolean addCart(Long userId, Long productId);
+    boolean addCart(Long userId, Long productId, String size, String color);
 
     // Remove Product
-    void removeProductToCart(Long userId, Long productId);
+    void removeProductToCart(Long userId, Long cartId);
 
     // Delete Cart When CheckOut
     void removeCartByUserId(Long userId);
 
+    boolean setQuantity(Long userId, Long cartId, Long quantity);
+
     // Replace quantity product
-    boolean replaceQuantityProduct(Long userId, Long productId, Long quantityReplace);
+    boolean replaceQuantityProduct(Long userId, Long cartId, Long quantityReplace);
 }

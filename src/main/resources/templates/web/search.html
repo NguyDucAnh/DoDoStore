@@ -12,11 +12,10 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
     />
-    <link rel="stylesheet" th:href="@{/css/web/header.css}" />
     <link rel="stylesheet" th:href="@{/css/web/footer.css}" />
     <style>
       body {
-        background-color: #f8f9fa;
+        background-color: #f7f7f7;
       }
 
       .filter-container {
@@ -42,7 +41,7 @@
       }
 
       .filter-title {
-        color: #2c3e50;
+        color: #202020;
         font-size: 1.2rem;
         font-weight: 600;
         margin-bottom: 15px;
@@ -58,7 +57,7 @@
       .filter-label {
         font-size: 16px;
         font-weight: 600;
-        color: #2c3e50;
+        color: #202020;
         margin-bottom: 10px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -66,7 +65,7 @@
 
       .filter-label i {
         margin-right: 8px;
-        color: #3498db;
+        color: #111111;
       }
 
       .price-range {
@@ -86,8 +85,8 @@
       }
 
       .price-input:focus {
-        border-color: #3498db;
-        box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        border-color: #111111;
+        box-shadow: 0 0 5px rgba(17, 17, 17, 0.3);
       }
 
       .category-filter {
@@ -97,7 +96,7 @@
       }
 
       .category-btn {
-        background: #f8f9fa;
+        background: #f7f7f7;
         border: 1px solid #ddd;
         padding: 8px 15px;
         border-radius: 20px;
@@ -107,9 +106,9 @@
 
       .category-btn:hover,
       .category-btn.active {
-        background: #3498db;
+        background: #111111;
         color: white;
-        border-color: #3498db;
+        border-color: #111111;
       }
 
       .sort-select {
@@ -122,8 +121,8 @@
       }
 
       .sort-select:focus {
-        border-color: #3498db;
-        box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        border-color: #111111;
+        box-shadow: 0 0 5px rgba(17, 17, 17, 0.3);
       }
 
       .product-grid {
@@ -209,19 +208,19 @@
 
       .product-name {
         font-size: 16px;
-        color: #2c3e50;
+        color: #202020;
         margin: 10px 0;
         flex-grow: 1;
       }
 
       .product-price {
-        color: #e74c3c;
+        color: #d30000;
         font-weight: bold;
         font-size: 1.1rem;
       }
 
       .discount-badge {
-        background: #e74c3c;
+        background: #d30000;
         color: white;
         padding: 3px 8px;
         border-radius: 12px;
@@ -230,7 +229,7 @@
       }
 
       .apply-filters {
-        background: #3498db;
+        background: #111111;
         color: white;
         border: none;
         padding: 10px 20px;
@@ -242,9 +241,9 @@
       }
 
       .apply-filters:hover {
-        background: #2980b9;
+        background: #333333;
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        box-shadow: 0 4px 8px rgba(17, 17, 17, 0.3);
       }
 
       .no-results {
@@ -259,22 +258,22 @@
       }
 
       .page-link {
-        color: #3498db;
-        border-color: #3498db;
+        color: #111111;
+        border-color: #111111;
         margin: 0 5px;
         border-radius: 5px;
         transition: all 0.3s ease;
       }
 
       .page-link:hover {
-        background: #3498db;
+        background: #111111;
         color: white;
-        border-color: #3498db;
+        border-color: #111111;
       }
 
       .page-item.active .page-link {
-        background: #3498db;
-        border-color: #3498db;
+        background: #111111;
+        border-color: #111111;
       }
 
       /* Feature badges */
@@ -348,7 +347,7 @@
       .filter-label {
         font-size: 14px;
         font-weight: 600;
-        color: #2c3e50;
+        color: #202020;
         margin-bottom: 8px;
         text-transform: uppercase;
         display: flex;
@@ -357,7 +356,7 @@
       }
 
       .filter-label i {
-        color: #3498db;
+        color: #111111;
       }
 
       /* Price inputs */
@@ -425,7 +424,7 @@
       .btn-filter {
         height: 35px;
         padding: 0 25px;
-        background: #3498db;
+        background: #111111;
         color: white;
         border: none;
         border-radius: 5px;
@@ -436,7 +435,7 @@
       }
 
       .btn-filter:hover {
-        background: #2980b9;
+        background: #333333;
         transform: translateY(-2px);
       }
 
@@ -474,101 +473,56 @@
           width: 100%;
         }
       }
+        .search-product-price {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin: 10px 0 14px;
+}
+
+.search-price-original {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.search-price-original del {
+    color: #888;
+    font-size: 13px;
+}
+
+.search-price-badge {
+    padding: 3px 7px;
+    border-radius: 4px;
+    background: #fff1f1;
+    color: #c62828;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.search-price-current {
+    color: #c62828;
+    font-size: 18px;
+    font-weight: 700;
+    white-space: nowrap;
+}
     </style>
-  </head>
-  <body>
+      <link rel="stylesheet" th:href="@{/css/web/torano-theme.css}" href="/css/web/torano-theme.css" />
+    <link rel="stylesheet" th:href="@{/css/web/chatbot.css}" />
+<link rel="stylesheet" href="/css/web/storefront-header.css" th:href="@{/css/web/storefront-header.css}" />
+<link rel="stylesheet" href="/css/web/header.css" />
+<link rel="stylesheet" href="/css/web/nav.css" />
+<link rel="stylesheet" href="/css/web/torano-theme.css" />
+<link rel="stylesheet" href="/css/web/enhancements.css" />
+</head>
+  <body class="dodo-page">
+<div th:replace="~{fragments/storefront-header :: header}"></div>
+
     <!-- Phần Đầu Trang -->
-    <header class="header">
-      <div class="container">
-        <div class="d-flex align-items-center justify-content-between">
-          <a
-            href="/home"
-            class="d-flex align-items-center text-decoration-none"
-          >
-            <img class="logo" th:src="@{/image/logo.jpg}" alt="Logo" />
-            <h1 class="header-title">DoDo Store</h1>
-          </a>
-
-          <div class="d-flex align-items-center">
-            <form
-              class="form-inline mr-3"
-              th:action="@{/home/search-name}"
-              method="post"
-            >
-              <div class="input-group">
-                <input
-                  class="form-control"
-                  type="search"
-                  placeholder="Tìm kiếm sản phẩm..."
-                  aria-label="Search"
-                  name="name"
-                  th:value="${name}"
-                />
-                <div class="input-group-append">
-                  <button class="btn btn-custom" type="submit">
-                    <i class="fas fa-search"></i> Tìm
-                  </button>
-                </div>
-              </div>
-            </form>
-
-            <!-- Hiển thị nút đăng nhập/đăng ký khi chưa đăng nhập -->
-            <th:block th:if="${user == null}">
-              <a th:href="@{/login}" class="btn btn-custom mr-2">
-                <i class="fas fa-sign-in-alt"></i> Đăng nhập
-              </a>
-              <a th:href="@{/register}" class="btn btn-custom">
-                <i class="fas fa-user-plus"></i> Đăng ký
-              </a>
-            </th:block>
-
-            <!-- Hiển thị các nút khác khi đã đăng nhập -->
-            <th:block th:if="${user != null}">
-              <div class="dropdown mr-2">
-                <button
-                  class="btn btn-custom dropdown-toggle"
-                  type="button"
-                  id="userDropdown"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  <i class="fas fa-user"></i>
-                  <span th:text="${user.username}">Tài khoản</span>
-                </button>
-                <div class="dropdown-menu" aria-labelledby="userDropdown">
-                  <a class="dropdown-item" th:href="@{/user/info}">
-                    <i class="fas fa-user-circle"></i> Thông tin tài khoản
-                  </a>
-                  <a class="dropdown-item" th:href="@{/user/history}">
-                    <i class="fas fa-history"></i> Lịch sử đn hàng
-                  </a>
-                  <div class="dropdown-divider"></div>
-                  <form th:action="@{/logout}" method="post" class="m-0">
-                    <button type="submit" class="dropdown-item">
-                      <i class="fas fa-sign-out-alt"></i> Đăng xuất
-                    </button>
-                  </form>
-                </div>
-              </div>
-
-              <a
-                th:href="@{/user/cart/{id}(id=${user.id})}"
-                class="btn btn-custom position-relative mr-2"
-              >
-                <i class="fas fa-shopping-cart"></i> Giỏ hàng
-                <span
-                  th:text="${count}"
-                  class="badge badge-danger position-absolute"
-                  style="top: -5px; right: -5px"
-                  >0</span
-                >
-              </a>
-            </th:block>
-          </div>
-        </div>
-      </div>
-    </header>
+    
 
     <div class="container">
       <!-- Horizontal Filter Bar -->
@@ -577,9 +531,10 @@
           id="filterForm"
           th:action="@{/home/search}"
           th:object="${newSearch}"
-          method="POST"
+          method="GET"
           class="filter-form"
         >
+          <input type="hidden" th:field="*{name}" />
           <div class="filter-row">
             <!-- Column 1: Price and Sort -->
             <div class="price-sort-column">
@@ -680,7 +635,7 @@
 
       <!-- Results Count -->
       <div class="results-count">
-        <span th:text="${'Tìm thấy ' + products.size() + ' sản phẩm'}"></span>
+        <span th:text="${'Tìm thấy ' + productPage.totalElements + ' sản phẩm'}"></span>
       </div>
 
       <!-- Product Grid -->
@@ -704,17 +659,25 @@
             </div>
           </div>
           <h5 class="product-name" th:text="${product.name}">Product Name</h5>
-          <div class="d-flex justify-content-center align-items-center">
-            <span class="product-price" th:text="${product.price + ' Vnđ'}"
-              >Price</span
-            >
-            <span
-              class="discount-badge"
-              th:if="${product.discount > 0}"
-              th:text="'Giảm ' + ${product.discount} + '%'"
-            >
-            </span>
-          </div>
+            <div class="search-product-price"
+                 th:with="discount=${product.discount != null ? product.discount : 0}">
+
+                <div class="search-price-original" th:if="${discount > 0}">
+                    <del th:text="${#numbers.formatDecimal(
+            product.price, 1, 'COMMA', 0, 'POINT')} + ' Vnđ'">
+                    </del>
+
+                    <span class="search-price-badge"
+                          th:text="'-' + ${discount} + '%'">
+        </span>
+                </div>
+
+                <span class="search-price-current"
+                      th:text="${#numbers.formatDecimal(
+              product.price * (1 - discount / 100.0),
+              1, 'COMMA', 0, 'POINT')} + ' Vnđ'">
+    </span>
+            </div>
           <a
             th:href="@{'/home/product/' + ${product.id}}"
             class="btn btn-primary mt-2"
@@ -737,7 +700,7 @@
       
           <!-- Previous Page -->
           <li class="page-item" th:classappend="${productPage.first} ? 'disabled'">
-            <a class="page-link" th:href="@{/home/search(page=${productPage.number - 1})}" aria-label="Previous">
+            <a class="page-link" th:href="@{/home/search(page=${productPage.number - 1},name=${newSearch.name},minPrice=${newSearch.minPrice},maxPrice=${newSearch.maxPrice},brands=${newSearch.brands},categories=${newSearch.categories},typeSort=${newSearch.typeSort})}" aria-label="Previous">
               <span aria-hidden="true">&laquo;</span>
             </a>
           </li>
@@ -746,13 +709,13 @@
           <li class="page-item" th:each="i : ${#numbers.sequence(0, productPage.totalPages - 1)}"
               th:classappend="${i == productPage.number} ? 'active'">
             <a class="page-link"
-               th:href="@{/home/search(page=${i})}"
+               th:href="@{/home/search(page=${i},name=${newSearch.name},minPrice=${newSearch.minPrice},maxPrice=${newSearch.maxPrice},brands=${newSearch.brands},categories=${newSearch.categories},typeSort=${newSearch.typeSort})}"
                th:text="${i + 1}">1</a>
           </li>
       
           <!-- Next Page -->
           <li class="page-item" th:classappend="${productPage.last} ? 'disabled'">
-            <a class="page-link" th:href="@{/home/search(page=${productPage.number + 1})}" aria-label="Next">
+            <a class="page-link" th:href="@{/home/search(page=${productPage.number + 1},name=${newSearch.name},minPrice=${newSearch.minPrice},maxPrice=${newSearch.maxPrice},brands=${newSearch.brands},categories=${newSearch.categories},typeSort=${newSearch.typeSort})}" aria-label="Next">
               <span aria-hidden="true">&raquo;</span>
             </a>
           </li>
@@ -825,5 +788,6 @@
         button.classList.add("active");
       }
     </script>
-  </body>
+      <th:block th:replace="~{fragments/chatbot :: widget}"></th:block>
+</body>
 </html>

@@ -23,7 +23,8 @@ class VnpayServiceTest {
         service = new VnpayService(config, repo, mock(CartRepository.class), details);
         org.springframework.test.util.ReflectionTestUtils.setField(service, "em", mock(jakarta.persistence.EntityManager.class));
         OrderEntity order = new OrderEntity(); order.setId(1L); order.setStatus(StatusOrderEnum.Cho_Thanh_Toan);
-        payment = new PaymentTransaction(); payment.setOrder(order); payment.setAmount(10000L);
+        payment = new PaymentTransaction(); payment.setOrder(order); payment.setAmount(10000L); payment.setTxnRef("abc");
+        when(repo.findByTxnRef("abc")).thenReturn(Optional.of(payment));
         when(repo.lockByRef("abc")).thenReturn(Optional.of(payment));
         when(details.findByOrderId(1L)).thenReturn(new ArrayList<>());
         params = new HashMap<>(Map.of("vnp_TmnCode", "TEST1234", "vnp_TxnRef", "abc", "vnp_Amount", "1000000",
@@ -39,7 +40,7 @@ class VnpayServiceTest {
     }
     @Test void repeatedSuccessDoesNotProcessDetailsAgain() {
         sign(); assertEquals("00", service.ipn(params).get("RspCode"));
-        assertEquals("SUCCESS", payment.getStatus()); assertEquals(StatusOrderEnum.Dang_Xu_Ly, payment.getOrder().getStatus());
+        assertEquals("SUCCESS", payment.getStatus()); assertEquals(StatusOrderEnum.Dang_Giao, payment.getOrder().getStatus());
         assertEquals("02", service.ipn(params).get("RspCode")); verify(details, times(1)).findByOrderId(1L);
     }
     @Test void cancelIsTerminal() {
@@ -68,5 +69,31 @@ class VnpayServiceTest {
         params.put("vnp_ResponseCode", "24"); params.put("vnp_TransactionStatus", "02"); sign();
         service.ipn(params); service.ipn(params);
         assertEquals(10L, product.getQuantity()); assertEquals(1L, product.getQuantitySell());
+    }
+    @Test void returnSuccessBeforeIpnUpdatesOrderOnce() {
+        sign();
+        assertEquals("SUCCESS", service.result(params).get("status"));
+        assertEquals(StatusOrderEnum.Dang_Giao, payment.getOrder().getStatus());
+        assertEquals("02", service.ipn(params).get("RspCode"));
+        service.result(params);
+        verify(details, times(1)).findByOrderId(1L);
+    }
+    @Test void cancellationReturnWithoutTransactionStatus() {
+        params.put("vnp_ResponseCode", "24"); params.remove("vnp_TransactionStatus"); sign();
+        assertEquals("CANCELLED", service.result(params).get("status"));
+        assertEquals(StatusOrderEnum.Da_Huy, payment.getOrder().getStatus());
+        service.result(params);
+        verify(details, times(1)).findByOrderId(1L);
+    }
+    @Test void invalidReturnCannotChangeOrder() {
+        assertThrows(IllegalArgumentException.class, () -> service.result(params));
+        assertEquals(StatusOrderEnum.Cho_Thanh_Toan, payment.getOrder().getStatus());
+        verifyNoInteractions(repo);
+    }
+    @Test void intermediateReturnKeepsOrderPending() {
+        params.put("vnp_TransactionStatus", "01"); sign();
+        assertEquals("PENDING", service.result(params).get("status"));
+        assertEquals(StatusOrderEnum.Cho_Thanh_Toan, payment.getOrder().getStatus());
+        verifyNoInteractions(details);
     }
 }

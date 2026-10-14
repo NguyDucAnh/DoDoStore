@@ -20,6 +20,11 @@ import org.springframework.web.servlet.ModelAndView;
 public class WebController {
 
     @Autowired
+    private com.dodostore.dodostore.repository.ProductRepository productRepository;
+    @Autowired
+    private com.dodostore.dodostore.mapper.ProductMapper productMapper;
+
+    @Autowired
     private ProductService productService;
 
     @Autowired
@@ -38,6 +43,7 @@ public class WebController {
     public ModelAndView homePage() {
         ModelAndView mav = new ModelAndView("web/home");
 
+        mav.addObject("flashSales", productRepository.findByStatus(StatusEnum.Active).stream().filter(p -> p.isFlashSaleActive() && p.getQuantity() != null && p.getQuantity() > 0).map(productMapper::toProductResponse).toList());
         mav.addObject("brands", brandService.getAllPaginated(0,8, "id", "asc", null, StatusEnum.Active));
         mav.addObject("products", productService.getAllProductsPaginated(0,10, "id", "asc", null, StatusEnum.Active));
         mav.addObject("productSales", productService.getProductSale());

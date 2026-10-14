@@ -39,6 +39,11 @@ public class OrderEntity {
     @Column(name = "status_order")
     StatusOrderEnum status;
 
+    // True only while this order mirrors the customer's cart.
+    // Nullable for compatibility with existing orders.
+    @Column(name = "cart_draft")
+    Boolean cartDraft;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     UserEntity user;

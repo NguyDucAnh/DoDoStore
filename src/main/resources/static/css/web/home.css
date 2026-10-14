@@ -53,7 +53,7 @@
   
   h3 {
     font-size: 24px;
-    color: #2c3e50;
+    color: #202020;
     margin-bottom: 10px;
   }
   
@@ -149,12 +149,12 @@
   
   .product-item h4 {
     font-size: 16px;
-    color: #2c3e50;
+    color: #202020;
     margin-bottom: 10px;
   }
   
   .product-item p {
-    color: #e74c3c;
+    color: #d30000;
     font-weight: bold;
     margin-bottom: 5px;
   }
@@ -185,7 +185,7 @@
   
   .prev-btn:hover,
   .next-btn:hover {
-    background: #2c3e50;
+    background: #202020;
   }
   
   @media (max-width: 768px) {
@@ -355,7 +355,7 @@
   
   /* Style cho product price */
   .product-price {
-    color: #e74c3c;
+    color: #d30000;
     font-size: 1.2rem;
     font-weight: bold;
     margin-bottom: 10px;
@@ -368,13 +368,13 @@
   }
   
   .product-card .btn-primary {
-    background-color: #3498db;
-    border-color: #3498db;
+    background-color: #111111;
+    border-color: #111111;
   }
   
   .product-card .btn-primary:hover {
-    background-color: #2980b9;
-    border-color: #2980b9;
+    background-color: #333333;
+    border-color: #333333;
     transform: translateY(-2px);
   }
   
@@ -413,7 +413,7 @@
   .list_spbanhchay h3:hover,
   .brands-section h3:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+    box-shadow: 0 6px 20px rgba(17, 17, 17, 0.4);
   }
   
   .list_new_product hr,
@@ -540,7 +540,7 @@
   
   .brands-section h3 {
     display: inline-block;
-    background-color: #3498db;
+    background-color: #111111;
     color: white;
     padding: 12px 35px;
     border-radius: 40px;
@@ -575,7 +575,7 @@
     margin: 0 auto 20px;
     padding: 15px;
     border-radius: 50%;
-    background: #f8f9fa;
+    background: #f7f7f7;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -588,7 +588,7 @@
   }
   
   .brand-card h4 {
-    color: #2c3e50;
+    color: #202020;
     font-size: 18px;
     margin-bottom: 15px;
   }
@@ -625,4 +625,19 @@
       grid-template-columns: 1fr;
     }
   }
-  
+  /* Giữ nút điều hướng bên trong hai khung sản phẩm */
+  #productCarousel,
+  #productSaleCarousel {
+  position: relative;
+  padding: 0 50px;
+  }
+
+  #productCarousel > .carousel-control-prev,
+  #productSaleCarousel > .carousel-control-prev {
+  left: 5px;
+  }
+
+  #productCarousel > .carousel-control-next,
+  #productSaleCarousel > .carousel-control-next {
+  right: 5px;
+  }

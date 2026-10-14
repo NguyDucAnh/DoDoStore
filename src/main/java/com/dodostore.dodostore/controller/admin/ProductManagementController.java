@@ -8,8 +8,6 @@ import com.dodostore.dodostore.service.BrandService;
 import com.dodostore.dodostore.service.CategoryService;
 import com.dodostore.dodostore.service.ImageService;
 import com.dodostore.dodostore.service.ProductService;
-import com.dodostore.dodostore.utils.upload.ExcelProductHelper;
-import com.dodostore.dodostore.utils.upload.ProductExcelService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,14 +26,12 @@ public class ProductManagementController {
     private final BrandService brandService;
     private final CategoryService categoryService;
     private final ImageService imageService;
-    private final ProductExcelService excelService;
 
-    public ProductManagementController(ProductService productService, BrandService brandService, CategoryService categoryService, ImageService imageService, ProductExcelService excelService) {
+    public ProductManagementController(ProductService productService, BrandService brandService, CategoryService categoryService, ImageService imageService) {
         this.productService = productService;
         this.brandService = brandService;
         this.categoryService = categoryService;
         this.imageService = imageService;
-        this.excelService = excelService;
     }
 
     // View all product
@@ -175,18 +171,4 @@ public class ProductManagementController {
         }
     }
 
-    @PostMapping("/add/upload")
-    public ResponseEntity<?> uploadExcelFile(@RequestParam("file") MultipartFile file) {
-        if (!ExcelProductHelper.hasExcelFormat(file)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Vui lòng tải lên file Excel hợp lệ (.xlsx)");
-        }
-
-        try {
-            excelService.importProductsFromExcel(file);
-            return ResponseEntity.ok("Tải lên thành công!");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Tải lên thất bại: " + e.getMessage());
-        }
-    }
 }

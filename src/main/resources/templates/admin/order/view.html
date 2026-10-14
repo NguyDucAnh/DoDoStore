@@ -326,7 +326,11 @@
               <i class="fas fa-calendar-alt"></i>
               Ngày Mua
             </div>
-            <div class="info-value" th:text="${order.date}"></div>
+              <div class="info-value"
+                   th:text="${order.date != null
+         ? #dates.format(order.date, 'dd/MM/yyyy')
+         : ''}">
+              </div>
           </div>
           <div class="info-item">
             <div class="info-label">
@@ -387,7 +391,8 @@
                   <span th:text="${item.product.id}"></span>
                 </span>
               </td>
-              <td th:text="${item.product.name}"></td>
+              <td><span th:text="${item.product.name}"></span><br/><small th:text="'Size: ' + ${item.size ?: 'Không ghi nhận'}"></small>
+<small th:text="'Màu: ' + ${item.color ?: 'Chưa ghi nhận'}"></small></td>
               <td class="price-column">
                 <i class="fas fa-dollar-sign"></i>
                 <span th:text="${item.price + ' Vnđ'}"></span>

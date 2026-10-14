@@ -78,10 +78,17 @@
       </div>
     </div>
 
-    <a href="/admin/order" class="nav-link">
+    <a href="/admin/flash-sale" class="nav-link"><i class="fas fa-bolt"></i><span>Chiến Dịch Flash Sale</span></a>
+        <a href="/admin/order" class="nav-link">
       <i class="fas fa-shopping-cart"></i><span>Quản Lý Đơn Hàng</span>
     </a>
-  </nav>
+    <form th:action="@{/logout}" method="post" class="admin-logout-form">
+            <button type="submit" class="admin-logout-btn">
+              <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+              <span>Đăng xuất</span>
+            </button>
+          </form>
+        </nav>
 
   <div class="main-content">
     <div class="header">

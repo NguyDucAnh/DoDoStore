@@ -15,7 +15,7 @@
     <style>
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: #f5f7fa;
+        background: #f7f7f7;
       }
 
       /* Style cho phần giới thiệu */
@@ -29,7 +29,7 @@
       }
 
       .section-title h2 {
-        color: #2c3e50;
+        color: #202020;
         font-size: 32px;
         font-weight: 700;
         margin-bottom: 20px;
@@ -46,7 +46,7 @@
         transform: translateX(-50%);
         width: 80px;
         height: 3px;
-        background: #3498db;
+        background: #111111;
       }
 
       .intro-card {
@@ -68,7 +68,7 @@
       .intro-icon {
         width: 70px;
         height: 70px;
-        background: #f8f9fa;
+        background: #f7f7f7;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -78,12 +78,12 @@
       }
 
       .intro-card:hover .intro-icon {
-        background: #3498db;
+        background: #111111;
       }
 
       .intro-icon i {
         font-size: 30px;
-        color: #3498db;
+        color: #111111;
         transition: all 0.3s ease;
       }
 
@@ -92,14 +92,14 @@
       }
 
       .intro-card h3 {
-        color: #2c3e50;
+        color: #202020;
         font-size: 24px;
         margin-bottom: 15px;
         text-align: center;
       }
 
       .intro-card p {
-        color: #7f8c8d;
+        color: #666666;
         line-height: 1.6;
         text-align: justify;
         flex-grow: 1;
@@ -123,7 +123,7 @@
       }
 
       .stats-section {
-        background: linear-gradient(135deg, #2c3e50, #3498db);
+        background: #111111;
         padding: 60px 0;
         color: white;
         margin: 40px 0;
@@ -185,12 +185,12 @@
       }
 
       .team-info h4 {
-        color: #2c3e50;
+        color: #202020;
         margin-bottom: 5px;
       }
 
       .team-info p {
-        color: #7f8c8d;
+        color: #666666;
         margin-bottom: 15px;
       }
 
@@ -203,17 +203,17 @@
       .social-links a {
         width: 35px;
         height: 35px;
-        background: #f8f9fa;
+        background: #f7f7f7;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #3498db;
+        color: #111111;
         transition: all 0.3s ease;
       }
 
       .social-links a:hover {
-        background: #3498db;
+        background: #111111;
         color: white;
         transform: translateY(-3px);
       }
@@ -233,7 +233,7 @@
         position: fixed;
         top: 20px;
         left: 20px;
-        background: #3498db;
+        background: #111111;
         color: white;
         width: 45px;
         height: 45px;
@@ -248,7 +248,7 @@
       }
 
       .back-button:hover {
-        background: #2980b9;
+        background: #333333;
         transform: translateY(-2px);
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         color: white;
@@ -259,8 +259,16 @@
         font-size: 20px;
       }
     </style>
-  </head>
-  <body>
+      <link rel="stylesheet" th:href="@{/css/web/torano-theme.css}" href="/css/web/torano-theme.css" />
+<link rel="stylesheet" href="/css/web/storefront-header.css" th:href="@{/css/web/storefront-header.css}" />
+<link rel="stylesheet" href="/css/web/header.css" />
+<link rel="stylesheet" href="/css/web/nav.css" />
+<link rel="stylesheet" href="/css/web/torano-theme.css" />
+<link rel="stylesheet" href="/css/web/enhancements.css" />
+</head>
+  <body class="dodo-page">
+<div th:replace="~{fragments/storefront-header :: header}"></div>
+
     <a href="/home" class="back-button">
       <i class="fas fa-arrow-left"></i>
     </a>
@@ -270,7 +278,7 @@
         <div class="section-title">
           <h2>Giới Thiệu Về DoDo Store</h2>
           <p>
-            Chúng tôi tự hào là địa chỉ tin cậy cho những người yêu thể thao
+            Chúng tôi tự hào là địa chỉ tin cậy cho những người đam mê mua sắm
           </p>
         </div>
 

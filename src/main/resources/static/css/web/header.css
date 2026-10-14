@@ -7,12 +7,12 @@
 
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: #f5f7fa;
+  background: #f7f7f7;
 }
 
 /* Header Styles */
 .header {
-  background: linear-gradient(135deg, #2c3e50, #3498db);
+  background: #111111;
   padding: 15px 0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   position: relative;
@@ -50,7 +50,7 @@ body {
 .btn-custom {
   border-radius: 20px;
   padding: 8px 20px;
-  background-color: #3498db;
+  background-color: #111111;
   color: white;
   border: none;
   font-weight: 600;
@@ -58,7 +58,7 @@ body {
 }
 
 .btn-custom:hover {
-  background-color: #2980b9;
+  background-color: #333333;
   color: white;
   transform: translateY(-2px);
 }
@@ -88,14 +88,14 @@ body {
 }
 
 .dropdown-item:hover {
-  background-color: #f8f9fa;
-  color: #3498db;
+  background-color: #f7f7f7;
+  color: #111111;
   transform: translateX(5px);
 }
 
 .dropdown-item i {
   margin-right: 10px;
-  color: #3498db;
+  color: #111111;
 }
 
 .dropdown-divider {

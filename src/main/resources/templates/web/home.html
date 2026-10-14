@@ -17,181 +17,66 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
     />
-    <link rel="stylesheet" th:href="@{/css/web/header.css}" />
-    <link rel="stylesheet" th:href="@{/css/web/nav.css}" />
     <link rel="stylesheet" th:href="@{/css/web/footer.css}" />
     <link rel="stylesheet" th:href="@{/css/web/home.css}" />
-  </head>
-  <body id="top">
+      <link rel="stylesheet" th:href="@{/css/web/torano-theme.css}" href="/css/web/torano-theme.css" />
+      <link rel="stylesheet" th:href="@{/css/web/chatbot.css}" />
+<link rel="stylesheet" href="/css/web/storefront-header.css"/>
+<link rel="stylesheet" href="/css/web/header.css" />
+<link rel="stylesheet" href="/css/web/nav.css" />
+<link rel="stylesheet" href="/css/web/torano-theme.css" />
+<link rel="stylesheet" href="/css/web/enhancements.css" />
+</head>
+<body class="dodo-page">
+<div th:replace="~{fragments/storefront-header :: header}"></div>
     <!-- Phần Đầu Trang -->
-    <header class="header">
-      <div class="container">
-        <div class="d-flex align-items-center justify-content-between">
-          <a
-            href="/home"
-            class="d-flex align-items-center text-decoration-none"
-          >
-            <img class="logo" th:src="@{/image/logo.jpg}" alt="Logo" />
-            <h1 class="header-title">DoDo Store</h1>
-          </a>
-
-          <div class="d-flex align-items-center">
-            <form
-              class="form-inline mr-3"
-              th:action="@{/home/search-name}"
-              method="post"
-              onsubmit="return checkSearch()"
-            >
-              <div class="input-group">
-                <input
-                  id="search"
-                  class="form-control"
-                  type="search"
-                  placeholder="Tìm kiếm sản phẩm..."
-                  aria-label="Search"
-                  name="name"
-                  th:value="${name}"
-                />
-                <div class="input-group-append">
-                  <button class="btn btn-custom" type="submit">
-                    <i class="fas fa-search"></i> Tìm
-                  </button>
-                </div>
-              </div>
-            </form>
-
-            <!-- Hiển thị nút đăng nhập/đăng ký khi chưa đăng nhập -->
-            <th:block th:if="${user == null}">
-              <a th:href="@{/login}" class="btn btn-custom mr-2">
-                <i class="fas fa-sign-in-alt"></i> Đăng nhập
-              </a>
-              <a th:href="@{/register}" class="btn btn-custom">
-                <i class="fas fa-user-plus"></i> Đăng ký
-              </a>
-            </th:block>
-
-            <!-- Hiển thị các nút khác khi đã đăng nhập -->
-            <th:block th:if="${user != null}">
-              <div class="dropdown mr-2">
-                <button
-                  class="btn btn-custom dropdown-toggle"
-                  type="button"
-                  id="userDropdown"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  <i class="fas fa-user"></i>
-                  <span th:text="${user.username}">Tài khoản</span>
-                </button>
-                <div class="dropdown-menu" aria-labelledby="userDropdown">
-                  <a class="dropdown-item" th:href="@{/user/info}">
-                    <i class="fas fa-user-circle"></i> Thông tin tài khoản
-                  </a>
-                  <a class="dropdown-item" th:href="@{/user/history}">
-                    <i class="fas fa-history"></i> Lịch sử đơn hàng
-                  </a>
-                  <div class="dropdown-divider"></div>
-                  <form th:action="@{/logout}" method="post" class="m-0">
-                    <button type="submit" class="dropdown-item">
-                      <i class="fas fa-sign-out-alt"></i> Đăng xuất
-                    </button>
-                  </form>
-                </div>
-              </div>
-
-              <a
-                th:href="@{/user/cart/{id}(id=${user.id})}"
-                class="btn btn-custom position-relative mr-2"
-              >
-                <i class="fas fa-shopping-cart"></i> Giỏ hàng
-                <span
-                  th:text="${quantity}"
-                  class="badge badge-danger position-absolute"
-                  style="top: -5px; right: -5px"
-                  >0</span
-                >
-              </a>
-            </th:block>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <div class="nav-container">
-      <div class="container">
-        <button class="menu-toggle" onclick="toggleMenu()">
-          <i class="fas fa-bars"></i> Menu
-        </button>
-        <nav class="nav nav-pills nav-justified" style="font-size: 0.9rem">
-          <a class="nav-link" href="#top">
-            <i class="fas fa-home"></i> Trang Chủ
-          </a>
-          <a class="nav-link" href="#brand">
-            <i class="fas fa-box"></i> Thương Hiệu
-          </a>
-          <a class="nav-link" href="#newest-products">
-            <i class="fas fa-star"></i> Mới Nhất
-          </a>
-          <a class="nav-link" href="#sale-products">
-            <i class="fas fa-percentage"></i> Khuyến Mãi
-          </a>
-          <a class="nav-link" th:href="@{/home/introduce}">
-            <i class="fas fa-info-circle"></i> Giới Thiệu
-          </a>
-          <a class="nav-link" th:href="@{/home/contact}">
-            <i class="fas fa-phone"></i> Liên Hệ
-          </a>
-        </nav>
-      </div>
-    </div>
-
-    <div class="container-fluid">
-      <div
-        id="bannerCarousel"
-        class="carousel slide banner-slider"
-        data-ride="carousel"
-        data-interval="3000"
-      >
+<div class="container-fluid">
+    <div
+            id="bannerCarousel"
+            class="carousel slide banner-slider"
+            data-ride="carousel"
+            data-interval="3000"
+    >
         <ol class="carousel-indicators">
-          <li
-            data-target="#bannerCarousel"
-            data-slide-to="0"
-            class="active"
-          ></li>
-          <li data-target="#bannerCarousel" data-slide-to="1"></li>
-          <li data-target="#bannerCarousel" data-slide-to="2"></li>
+            <li
+                    data-target="#bannerCarousel"
+                    data-slide-to="0"
+                    class="active"
+            ></li>
+            <li data-target="#bannerCarousel" data-slide-to="1"></li>
+            <li data-target="#bannerCarousel" data-slide-to="2"></li>
         </ol>
         <div class="carousel-inner">
-          <div class="carousel-item active">
-            <img th:src="@{/image/banner1.jpg}" alt="Banner 1" />
-          </div>
-          <div class="carousel-item">
-            <img th:src="@{/image/banner2.jpg}" alt="Banner 2" />
-          </div>
-          <div class="carousel-item">
-            <img th:src="@{/image/banner3.jpg}" alt="Banner 3" />
-          </div>
+            <div class="carousel-item active">
+                <img th:src="@{/image/banner1.jpg}" alt="Banner 1" />
+            </div>
+            <div class="carousel-item">
+                <img th:src="@{/image/banner2.jpg}" alt="Banner 2" />
+            </div>
+            <div class="carousel-item">
+                <img th:src="@{/image/banner3.jpg}" alt="Banner 3" />
+            </div>
         </div>
         <!-- Nút điều hướng mới -->
         <button
-          class="carousel-nav prev"
-          onclick="$('#bannerCarousel').carousel('prev')"
+                class="carousel-nav prev"
+                onclick="$('#bannerCarousel').carousel('prev')"
         >
-          <i class="fas fa-chevron-left"></i>
+            <i class="fas fa-chevron-left"></i>
         </button>
         <button
-          class="carousel-nav next"
-          onclick="$('#bannerCarousel').carousel('next')"
+                class="carousel-nav next"
+                onclick="$('#bannerCarousel').carousel('next')"
         >
-          <i class="fas fa-chevron-right"></i>
+            <i class="fas fa-chevron-right"></i>
         </button>
-      </div>
     </div>
-
+</div>
     <section class="brands-section" id="brand">
       <div class="container">
-        <h3>THƯƠNG HIỆU</h3>
+          <h3 style="display: block; width: 100%; text-align: center !important;">
+              THƯƠNG HIỆU
+          </h3>
         <hr />
         <div class="brands-grid">
           <div class="brand-card" th:each="brand : ${brands}">
@@ -244,19 +129,17 @@
                   </div>
                   <h4 th:text="${product.name}">Product Name</h4>
                   <div
-                    class="d-flex justify-content-between align-items-center"
+                    class="d-flex justify-content-between align-items-center store-price-actions"
                   >
-                    <div>
-                      <span class="original-price text-muted" 
-                            style="text-decoration: line-through;" 
-                            th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')} + ' Vnđ'">
-                     Giá gốc
-                      </span>
-
-                      <span class="product-price text-danger" 
-                            th:text="${#numbers.formatDecimal(product.price * (1 - product.discount / 100.0), 0, 'COMMA', 2, 'POINT')} + ' Vnđ'">
-                    Giá khuyến mại
-                      </span>
+                    <div class="store-price">
+                      <div class="store-price-top" th:if="${product.discount > 0}">
+                        <del class="store-price-original"
+                             th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')} + ' Vnđ'">500.000 Vnđ</del>
+                        <span class="store-price-discount"
+                              th:text="'Giảm ' + ${product.discount} + '%'">Giảm 20%</span>
+                      </div>
+                      <span class="store-price-current"
+                            th:text="${#numbers.formatDecimal(product.price * (1 - product.discount / 100.0), 1, 'COMMA', 0, 'POINT')} + ' Vnđ'">400.000 Vnđ</span>
                     </div>
                     <a
                       th:href="@{/home/product/{id}(id=${product.id})}"
@@ -299,19 +182,17 @@
                   </div>
                   <h4 th:text="${product.name}">Product Name</h4>
                   <div
-                    class="d-flex justify-content-between align-items-center"
+                    class="d-flex justify-content-between align-items-center store-price-actions"
                   >
-                    <div>
-                      <span class="original-price text-muted" 
-                            style="text-decoration: line-through;" 
-                            th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')} + ' Vnđ'">
-                     Giá gốc
-                      </span>
-
-                      <span class="product-price text-danger" 
-                            th:text="${#numbers.formatDecimal(product.price * (1 - product.discount / 100.0), 0, 'COMMA', 2, 'POINT')} + ' Vnđ'">
-                    Giá khuyến mại
-                      </span>
+                    <div class="store-price">
+                      <div class="store-price-top" th:if="${product.discount > 0}">
+                        <del class="store-price-original"
+                             th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')} + ' Vnđ'">500.000 Vnđ</del>
+                        <span class="store-price-discount"
+                              th:text="'Giảm ' + ${product.discount} + '%'">Giảm 20%</span>
+                      </div>
+                      <span class="store-price-current"
+                            th:text="${#numbers.formatDecimal(product.price * (1 - product.discount / 100.0), 1, 'COMMA', 0, 'POINT')} + ' Vnđ'">400.000 Vnđ</span>
                     </div>
                     <a
                       th:href="@{/home/product/{id}(id=${product.id})}"
@@ -384,19 +265,17 @@
                   </div>
                   <h4 th:text="${product.name}">Product Name</h4>
                   <div
-                    class="d-flex justify-content-between align-items-center"
+                    class="d-flex justify-content-between align-items-center store-price-actions"
                   >
-                    <div>
-                      <span class="original-price text-muted" 
-                            style="text-decoration: line-through;" 
-                            th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')} + ' Vnđ'">
-                     Giá gốc
-                      </span>
-
-                      <span class="product-price text-danger" 
-                            th:text="${#numbers.formatDecimal(product.price * (1 - product.discount / 100.0), 0, 'COMMA', 2, 'POINT')} + ' Vnđ'">
-                    Giá khuyến mại
-                      </span>
+                    <div class="store-price">
+                      <div class="store-price-top" th:if="${product.discount > 0}">
+                        <del class="store-price-original"
+                             th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')} + ' Vnđ'">500.000 Vnđ</del>
+                        <span class="store-price-discount"
+                              th:text="'Giảm ' + ${product.discount} + '%'">Giảm 20%</span>
+                      </div>
+                      <span class="store-price-current"
+                            th:text="${#numbers.formatDecimal(product.price * (1 - product.discount / 100.0), 1, 'COMMA', 0, 'POINT')} + ' Vnđ'">400.000 Vnđ</span>
                     </div>
                     <a
                       th:href="@{/home/product/{id}(id=${product.id})}"
@@ -439,19 +318,17 @@
                   </div>
                   <h4 th:text="${product.name}">Product Name</h4>
                   <div
-                    class="d-flex justify-content-between align-items-center"
+                    class="d-flex justify-content-between align-items-center store-price-actions"
                   >
-                    <div>
-                      <span class="original-price text-muted" 
-                            style="text-decoration: line-through;" 
-                            th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')} + ' Vnđ'">
-                     Giá gốc
-                      </span>
-
-                      <span class="product-price text-danger" 
-                            th:text="${#numbers.formatDecimal(product.price * (1 - product.discount / 100.0), 0, 'COMMA', 2, 'POINT')} + ' Vnđ'">
-                    Giá khuyến mại
-                      </span>
+                    <div class="store-price">
+                      <div class="store-price-top" th:if="${product.discount > 0}">
+                        <del class="store-price-original"
+                             th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')} + ' Vnđ'">500.000 Vnđ</del>
+                        <span class="store-price-discount"
+                              th:text="'Giảm ' + ${product.discount} + '%'">Giảm 20%</span>
+                      </div>
+                      <span class="store-price-current"
+                            th:text="${#numbers.formatDecimal(product.price * (1 - product.discount / 100.0), 1, 'COMMA', 0, 'POINT')} + ' Vnđ'">400.000 Vnđ</span>
                     </div>
                     <a
                       th:href="@{/home/product/{id}(id=${product.id})}"
@@ -489,6 +366,19 @@
         </a>
       </div>
     </section>
+<section id="flash-sale" class="dodo-flash" th:if="${!#lists.isEmpty(flashSales)}">
+    <div class="flash-heading"><div><span class="flash-eyebrow">ƯU ĐÃI CÓ HẠN</span><h2><i class="fas fa-bolt" aria-hidden="true"></i> FLASH SALE</h2></div><p>Giá tốt hôm nay · Số lượng có hạn</p></div>
+    <div class="dodo-flash-grid">
+        <a class="dodo-flash-card" th:each="p : ${flashSales}" th:href="@{/home/product/{id}(id=${p.id})}">
+            <div class="flash-image"><img th:if="${p.images != null and !#lists.isEmpty(p.images)}" th:src="${p.images[0].imageLink}" th:alt="${p.name}" loading="lazy"><span th:if="${p.images == null or #lists.isEmpty(p.images)}" class="flash-image-placeholder"><i class="fas fa-tshirt" aria-hidden="true"></i></span></div>
+            <strong class="flash-product-name" th:text="${p.name}"></strong><br>
+            <span class="dodo-flash-badge" th:text="'-' + ${p.discount} + '%'"></span><br>
+            <del th:text="${#numbers.formatInteger(p.price, 1, 'COMMA')} + ' Vnđ'"></del><br>
+            <strong th:text="${#numbers.formatInteger(p.price * (100 - p.discount) / 100, 1, 'COMMA')} + ' Vnđ'"></strong>
+            <span class="dodo-countdown" th:attr="data-flash-end=${p.flashSaleEnd}"></span>
+        </a>
+    </div>
+</section>
 
     <!-- Phần Chân Trang -->
     <footer>
@@ -533,7 +423,7 @@
       // Thêm đoạn này vào cuối file hoặc trong thẻ script riêng
       function toggleMenu() {
         const navPills = document.querySelector('.nav-pills');
-        navPills.classList.toggle('show');
+        if(navPills) navPills.classList.toggle('show');
       }
 
       // Đóng menu khi click ra ngoài
@@ -541,7 +431,7 @@
         const navPills = document.querySelector('.nav-pills');
         const menuToggle = document.querySelector('.menu-toggle');
         
-        if (!navPills.contains(event.target) && !menuToggle.contains(event.target)) {
+        if (navPills && menuToggle && !navPills.contains(event.target) && !menuToggle.contains(event.target)) {
           navPills.classList.remove('show');
         }
       });
@@ -704,5 +594,8 @@
         return true; // Cho phép gửi form nếu có nội dung
       }
     </script>
-  </body>
+    
+    <th:block th:replace="~{fragments/chatbot :: widget}"></th:block>
+  <script src="/js/web/flash-sale.js"></script>
+</body>
 </html>

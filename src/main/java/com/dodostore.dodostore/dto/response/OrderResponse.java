@@ -15,7 +15,12 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderResponse {
+    public String getFormattedDate() {
+        return date == null ? "" : java.time.format.DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy")
+            .withZone(java.time.ZoneId.of("Asia/Ho_Chi_Minh")).format(date.toInstant());
+    }
     Long id;
+    Boolean cartDraft;
     Date date;
     Long total;
     Long quantity;

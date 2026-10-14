@@ -33,15 +33,19 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public String register(@Valid @ModelAttribute("newUser") CreateUserRequest newUser, BindingResult result, Model model) {
+    public String register(@org.springframework.validation.annotation.Validated({jakarta.validation.groups.Default.class, com.dodostore.dodostore.dto.request.Registration.class}) @ModelAttribute("newUser") CreateUserRequest newUser, BindingResult result, Model model) {
         if(result.hasErrors()){
             String enumKey = result.getFieldError().getDefaultMessage();
-            model.addAttribute("message", ErrorCode.valueOf(enumKey).getMessage());
+            String message;
+            try { message = ErrorCode.valueOf(enumKey).getMessage(); }
+            catch (IllegalArgumentException ex) { message = enumKey; }
+            model.addAttribute("message", message);
             return "web/register";
         }
         try {
             userService.registerUser(newUser);
-            model.addAttribute("message", "Create Account Success");
+            model.addAttribute("message", "Đăng ký thành công. Vui lòng đăng nhập.");
+            model.addAttribute("login", new LoginRequest());
             return "/web/login";
         } catch (Exception e) {
             model.addAttribute("message", e.getMessage());

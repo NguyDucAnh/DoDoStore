@@ -18,6 +18,10 @@ public class CartEntity {
 
     @Column(name = "quantity")
     Long quantity;
+    @Column(name = "size", length = 30)
+    String size;
+    @Column(name = "color", length = 60)
+    String color;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

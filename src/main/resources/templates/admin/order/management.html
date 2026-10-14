@@ -384,8 +384,10 @@
           opacity: 1;
         }
       }
+      .change-status-btn:disabled { opacity: .45; cursor: not-allowed; }
     </style>
-  </head>
+  <link rel="stylesheet" href="/css/admin/enhancements.css" />
+</head>
   <body>
     <div class="container">
       <!-- Sidebar -->
@@ -420,15 +422,39 @@
           </div>
         </div>
 
+        <a href="/admin/flash-sale" class="nav-link"><i class="fas fa-bolt"></i><span>Chiến Dịch Flash Sale</span></a>
         <a href="/admin/order" class="nav-link">
           <i class="fas fa-shopping-cart"></i><span>Quản Lý Đơn Hàng</span>
         </a>
-      </nav>
+        <form th:action="@{/logout}" method="post" class="admin-logout-form">
+            <button type="submit" class="admin-logout-btn">
+              <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+              <span>Đăng xuất</span>
+            </button>
+          </form>
+        </nav>
 
       <div class="main-content">
         <div class="header">
           <h1>Quản Lý Đơn Hàng</h1>
         </div>
+        <p th:if="${successMessage}" th:text="${successMessage}" role="status"
+           style="padding:12px;background:#e8f5e9;color:#256029;border-radius:6px"></p>
+        <p th:if="${errorMessage}" th:text="${errorMessage}" role="alert"
+           style="padding:12px;background:#ffebee;color:#b71c1c;border-radius:6px"></p>
+        <p style="color:#666;margin-bottom:16px">Chờ thanh toán và Đã hủy do dịch vụ thanh toán cập nhật.
+          Đơn trong giỏ hàng, đang chờ thanh toán hoặc đã hủy không thể đổi trạng thái tại đây.</p>
+        <form action="/admin/order" method="get" class="enhancement-panel enhancement-toolbar order-filter">
+          <label for="status-filter">Trạng thái</label>
+          <select id="status-filter" name="status">
+            <option value="">Tất cả</option>
+            <option th:each="s : ${filterStatuses}" th:value="${s}" th:selected="${s == selectedStatus}"
+              th:text="${s.name() == 'Dang_Xu_Ly' ? 'Đang xử lý' : s.name() == 'Dang_Giao' ? 'Đang giao' : s.name() == 'Da_Giao' ? 'Đã giao' : s.name() == 'Cho_Thanh_Toan' ? 'Chờ thanh toán' : 'Đã hủy'}"></option>
+          </select><button type="submit">Lọc đơn hàng</button>
+        </form>
+        <p class="enhancement-metric order-summary"><strong th:text="${filteredCount}"></strong> đơn hàng — Tổng giá trị đơn:
+          <strong th:text="${#numbers.formatInteger(filteredTotal, 1, 'COMMA')} + ' Vnđ'"></strong></p>
+        <p class="enhancement-empty" th:if="${#lists.isEmpty(orders)}">Không có đơn hàng phù hợp.</p>
         <table>
           <thead>
             <tr>
@@ -443,13 +469,15 @@
           <tbody>
             <tr th:each="order : ${orders}">
               <td th:text="${order.id}"></td>
-              <td th:text="${order.date}"></td>
+                <td th:text="${order.date != null
+    ? #dates.format(order.date, 'dd/MM/yyyy')
+    : ''}"></td>
               <td th:text="${order.total + ' Vnđ'}"></td>
               <td th:text="${order.quantity}"></td>
               <td>
                 <span
                   class="status-badge"
-                  th:text="${order.status}"
+                  th:text="${order.cartDraft == true ? order.status + ' (Trong giỏ hàng)' : order.status}"
                 >
                 </span>
               </td>
@@ -462,6 +490,7 @@
                 </a>
                 <button
                   class="change-status-btn"
+                  th:disabled="${order.cartDraft == true or order.status == T(com.dodostore.dodostore.enums.StatusOrderEnum).Cho_Thanh_Toan or order.status == T(com.dodostore.dodostore.enums.StatusOrderEnum).Da_Huy}"
                   th:onclick="'showStatusModal(' + ${order.id} + ')'"
                 >
                   <i class="fas fa-edit"></i> Thay Đổi Trạng Thái
@@ -472,6 +501,7 @@
         </table>
       </div>
     </div>
+    <form id="statusForm" method="post" th:action="@{/admin/order}"></form>
     <div id="statusModal" class="modal">
       <div class="modal-content">
         <span class="close" onclick="closeStatusModal()">&times;</span>
@@ -496,6 +526,7 @@
 
       function showStatusModal(orderId) {
         currentOrderId = orderId;
+        document.getElementById("statusSelect").value = "";
         document.getElementById("statusModal").style.display = "block";
       }
 
@@ -511,7 +542,11 @@
         }
 
         // Gửi request cập nhật trạng thái
-        window.location.href = `/admin/order/${currentOrderId}/${status}`;
+        const form = document.getElementById("statusForm");
+        const base = new URL(form.action);
+        base.pathname += `/${currentOrderId}/${encodeURIComponent(status)}`;
+        form.action = base.href;
+        form.submit();
       }
 
       // Đóng modal khi click ra ngoài

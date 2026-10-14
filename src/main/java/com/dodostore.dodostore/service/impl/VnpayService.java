@@ -19,6 +19,7 @@ public class VnpayService {
     private final PaymentTransactionRepository payments;
     private final CartRepository carts;
     private final OrderDetailRepository details;
+    @org.springframework.beans.factory.annotation.Autowired private CartOrderService cartOrders;
     @PersistenceContext private EntityManager em;
     private static final ZoneId ZONE = ZoneId.of("Asia/Ho_Chi_Minh");
     private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
@@ -44,7 +45,7 @@ public class VnpayService {
         List<CartEntity> items = new ArrayList<>(carts.findByUserId(userId));
         if (items.isEmpty()) throw new IllegalArgumentException("Giỏ hàng trống.");
         items.sort(Comparator.comparing(c -> c.getProduct().getId()));
-        OrderEntity order = new OrderEntity();
+        OrderEntity order = cartOrders.submit(user);
         order.setUser(user); order.setDate(new Date()); order.setAddress(address.getAddress());
         order.setPhone(address.getPhone()); order.setStatus(StatusOrderEnum.Cho_Thanh_Toan);
         order.setQuantity((long) items.size()); em.persist(order);
@@ -52,19 +53,25 @@ public class VnpayService {
         for (CartEntity cart : items) {
             ProductEntity product = cart.getProduct();
             em.refresh(product, LockModeType.PESSIMISTIC_WRITE);
+            com.dodostore.dodostore.utils.ProductSizes.requireSelection(cart);
             long quantity = cart.getQuantity() == null ? 0 : cart.getQuantity();
-            long discount = product.getDiscount() == null ? 0 : product.getDiscount();
+            long discount = product.getEffectiveDiscount() == null ? 0 : product.getEffectiveDiscount();
             if (quantity <= 0 || product.getStatus() != StatusEnum.Active || product.getQuantity() < quantity
                 || product.getPrice() == null || product.getPrice() <= 0 || discount < 0 || discount > 100)
                 throw new IllegalArgumentException("Sản phẩm không hợp lệ hoặc không đủ tồn kho: " + product.getName());
-            long line = Math.multiplyExact(Math.multiplyExact(product.getPrice(), 100 - discount), quantity) / 100;
+            long line = Math.multiplyExact(Math.multiplyExact(product.getPrice(), 100 - discount) / 100, quantity);
             OrderDetailEntity detail = new OrderDetailEntity();
             detail.setOrder(order); detail.setProduct(product); detail.setQuantity(quantity);
-            detail.setPrice(product.getPrice()); detail.setDiscount(discount); detail.setTotal(line); em.persist(detail);
+            detail.setSize(cart.getSize());
+            detail.setColor(cart.getColor());
+            detail.setPrice(product.getPrice()); detail.setDiscount(discount); detail.setTotal(line);
+            detail.setFlashSaleCampaignId(com.dodostore.dodostore.utils.CampaignAttribution.appliedCampaign(product, discount));
+            em.persist(detail);
             total = Math.addExact(total, line);
-            // Reserve stock now. Sold quantity is only increased after a verified successful IPN.
-            product.setQuantity(product.getQuantity() - quantity);
+            // Reserve stock now. Sold quantity is only increased after a verified successful callback.
+            product.reserveVariant(cart.getColor(), cart.getSize(), quantity);
             em.remove(cart);
+            em.flush();
         }
         if (total <= 0 || Math.multiplyExact(total, 100) > 999999999999L)
             throw new IllegalArgumentException("Tổng tiền không hợp lệ.");
@@ -103,9 +110,11 @@ public class VnpayService {
         if (!Long.toString(p.getAmount() * 100).equals(params.get("vnp_Amount"))) return reply("04", "Invalid amount");
         if (!"PENDING".equals(p.getStatus())) return reply("02", "Order already confirmed");
         String response = params.get("vnp_ResponseCode"), status = params.get("vnp_TransactionStatus");
-        if (response == null || status == null) return reply("99", "Missing result");
+        // A signed cancellation return may omit TransactionStatus.
+        boolean cancelled = "24".equals(response) && (status == null || status.isBlank() || "02".equals(status));
+        if (response == null || (status == null && !cancelled)) return reply("99", "Missing result");
         // Intermediate/reversal states need reconciliation, not automatic stock release.
-        if (!"00".equals(status) && !"02".equals(status)) return reply("99", "Result needs reconciliation");
+        if (!cancelled && !"00".equals(status) && !"02".equals(status)) return reply("99", "Result needs reconciliation");
         if ("00".equals(status) && !"00".equals(response)) return reply("99", "Inconsistent result");
         boolean success = "00".equals(response) && "00".equals(status);
         p.setStatus(success ? "SUCCESS" : "24".equals(response) ? "CANCELLED" : "15".equals(response) ? "EXPIRED" : "FAILED");
@@ -120,18 +129,27 @@ public class VnpayService {
         for (OrderDetailEntity line : lines) {
             ProductEntity product = line.getProduct(); em.refresh(product, LockModeType.PESSIMISTIC_WRITE);
             if (success) product.setQuantitySell(Math.addExact(product.getQuantitySell() == null ? 0 : product.getQuantitySell(), line.getQuantity()));
-            else product.setQuantity(Math.addExact(product.getQuantity(), line.getQuantity()));
+            else product.releaseVariant(line.getColor(), line.getSize(), line.getQuantity());
+            em.flush(); // Preserve changes before refreshing another size of the same product.
         }
-        p.getOrder().setStatus(success ? StatusOrderEnum.Dang_Xu_Ly : StatusOrderEnum.Da_Huy);
+        p.getOrder().setStatus(success ? StatusOrderEnum.Dang_Giao : StatusOrderEnum.Da_Huy);
         return reply("00", "Confirm Success");
     }
-    @Transactional(readOnly = true)
+    @Transactional
     public Map<String, Object> result(Map<String, String> params) {
-        if (!authentic(params)) throw new IllegalArgumentException("Chữ ký thanh toán không hợp lệ.");
+        // Share signature/amount checks, row locking and idempotency with IPN.
+        // This method owns the transaction when IPN is called internally.
+        Map<String, String> confirmation = ipn(params);
+        switch (confirmation.get("RspCode")) {
+            case "97" -> throw new IllegalArgumentException("Chữ ký thanh toán không hợp lệ.");
+            case "01" -> throw new IllegalArgumentException("Không tìm thấy giao dịch.");
+            case "04" -> throw new IllegalArgumentException("Số tiền không khớp.");
+            default -> { } // Pending/reconciliation results remain pending.
+        }
         PaymentTransaction p = payments.findByTxnRef(params.get("vnp_TxnRef")).orElseThrow(() -> new IllegalArgumentException("Không tìm thấy giao dịch."));
         if (!Long.toString(p.getAmount() * 100).equals(params.get("vnp_Amount"))) throw new IllegalArgumentException("Số tiền không khớp.");
         String message = switch (p.getStatus()) {
-            case "SUCCESS" -> "Thanh toán thành công. Đơn hàng đang được xử lý.";
+            case "SUCCESS" -> "Thanh toán thành công. Trạng thái đơn hàng: Đang giao.";
             case "FAILED", "CANCELLED", "EXPIRED" -> "Thanh toán thất bại, bị hủy hoặc hết hạn. Hàng đã được hoàn tồn.";
             default -> "Đang chờ VNPay xác nhận qua IPN. Không thanh toán lại nếu tài khoản đã bị trừ tiền.";
         };

@@ -34,6 +34,13 @@ public class OrderServiceImpl implements OrderService{
     @Autowired
     private OrderMapper orderMapper;
 
+    private List<OrderEntity> newestFirst(List<OrderEntity> orders) {
+        return orders.stream().sorted(java.util.Comparator
+                .comparing(OrderEntity::getDate, java.util.Comparator.nullsLast(java.util.Comparator.reverseOrder()))
+                .thenComparing(OrderEntity::getId, java.util.Comparator.nullsLast(java.util.Comparator.reverseOrder())))
+                .toList();
+    }
+
     @Override
     public Long getCount(){
         return orderRepository.count();
@@ -43,6 +50,7 @@ public class OrderServiceImpl implements OrderService{
     public Long getIncrease(){
         return orderRepository.findAll()
                        .stream()
+                       .filter(order -> !Boolean.TRUE.equals(order.getCartDraft()))
                        .filter(order -> order.getStatus() != StatusOrderEnum.Cho_Thanh_Toan && order.getStatus() != StatusOrderEnum.Da_Huy)
                        .filter(order -> order.getTotal() != null)
                        .mapToLong(order -> order.getTotal())
@@ -53,7 +61,7 @@ public class OrderServiceImpl implements OrderService{
     public List<OrderResponse> getAllOrder() {
         List<OrderResponse> result = new ArrayList<>();
 
-        for(OrderEntity order : orderRepository.findAll()){
+        for(OrderEntity order : newestFirst(orderRepository.findAll())){
             result.add(orderMapper.toOrderResponse(order));
         }
         return result;
@@ -69,6 +77,7 @@ public class OrderServiceImpl implements OrderService{
 
         OrderEntity order = new OrderEntity();
 
+        order.setStatus(StatusOrderEnum.Dang_Xu_Ly);
         order.setDate(new Date());
         order.setUser(user);
 
@@ -97,7 +106,7 @@ public class OrderServiceImpl implements OrderService{
     public List<OrderResponse> historyBuy(Long userId) {
         List<OrderResponse> result = new ArrayList<>();
 
-        for(OrderEntity order : orderRepository.findByUserId(userId)){
+        for(OrderEntity order : newestFirst(orderRepository.findByUserId(userId))){
             result.add(orderMapper.toOrderResponse(order));
         }
         return result;
@@ -106,9 +115,14 @@ public class OrderServiceImpl implements OrderService{
     @Override
     @org.springframework.transaction.annotation.Transactional
     public void updateStatusOrder(Long orderId, StatusOrderEnum status){
-        OrderEntity order = orderRepository.findById(orderId).get();
+        if (status == null) throw new IllegalArgumentException("Vui lòng chọn trạng thái.");
+        OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy đơn hàng."));
         entityManager.refresh(order, jakarta.persistence.LockModeType.PESSIMISTIC_WRITE);
 
+        if (Boolean.TRUE.equals(order.getCartDraft()))
+            throw new IllegalStateException("Đơn đang ở giỏ hàng. Khách cần đặt hàng trước khi chuyển trạng thái.");
+        if (order.getStatus() == status) return;
         if (order.getStatus() == StatusOrderEnum.Cho_Thanh_Toan || order.getStatus() == StatusOrderEnum.Da_Huy)
             throw new IllegalStateException("Không thể giao đơn chưa thanh toán hoặc đã hủy.");
         if (status == StatusOrderEnum.Cho_Thanh_Toan || status == StatusOrderEnum.Da_Huy)
@@ -119,19 +133,36 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
+    public void confirmReceived(Long userId, Long orderId) {
+        if (userId == null) throw new IllegalArgumentException("Vui lòng đăng nhập lại.");
+        OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy đơn hàng."));
+        entityManager.refresh(order, jakarta.persistence.LockModeType.PESSIMISTIC_WRITE);
+        if (order.getUser() == null || !userId.equals(order.getUser().getId()))
+            throw new IllegalArgumentException("Bạn không có quyền xác nhận đơn hàng này.");
+        if (Boolean.TRUE.equals(order.getCartDraft()))
+            throw new IllegalStateException("Đơn hàng chưa được đặt.");
+        // Repeated submissions are harmless; inventory and payment are unchanged.
+        if (order.getStatus() == StatusOrderEnum.Da_Giao) return;
+        if (order.getStatus() != StatusOrderEnum.Dang_Giao)
+            throw new IllegalStateException("Chỉ có thể xác nhận nhận hàng cho đơn đang giao.");
+        order.setStatus(StatusOrderEnum.Da_Giao);
+        orderRepository.save(order);
+    }
+
+    @Override
     public List<DailyRevenue> getRevenueByDay(LocalDate startDate, LocalDate endDate) {
         // Chuyển đổi LocalDate sang LocalDateTime
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
 
         List<Object[]> rawData = orderRepository.findRevenueByDay(startDateTime, endDateTime);
+        java.util.Map<String, BigDecimal> amounts = new java.util.HashMap<>();
+        for (Object[] row : rawData) amounts.put(row[0].toString().substring(0, 10), new BigDecimal(row[1].toString()));
         List<DailyRevenue> dailyRevenues = new ArrayList<>();
-
-        for (Object[] row : rawData) {
-            String date = ((Date) row[0]).toString();
-            BigDecimal revenue = (BigDecimal) row[1];
-            dailyRevenues.add(new DailyRevenue(date, revenue));
-        }
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1))
+            dailyRevenues.add(new DailyRevenue(date.toString(), amounts.getOrDefault(date.toString(), BigDecimal.ZERO)));
 
         return dailyRevenues;
     }

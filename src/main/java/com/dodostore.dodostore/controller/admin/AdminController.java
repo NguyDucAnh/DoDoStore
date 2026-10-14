@@ -26,7 +26,18 @@ public class AdminController {
     private OrderService orderService;
 
     @GetMapping
-    public ModelAndView homeAdmin() {
+    public ModelAndView homeAdmin(
+            @org.springframework.web.bind.annotation.RequestParam(required=false) @org.springframework.format.annotation.DateTimeFormat(iso=org.springframework.format.annotation.DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @org.springframework.web.bind.annotation.RequestParam(required=false) @org.springframework.format.annotation.DateTimeFormat(iso=org.springframework.format.annotation.DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        LocalDate today = LocalDate.now(java.time.ZoneId.of("Asia/Ho_Chi_Minh"));
+        if (endDate == null) endDate = today;
+        if (startDate == null) startDate = endDate.minusMonths(1);
+        String dateError = null;
+        if (startDate.isAfter(endDate) || java.time.temporal.ChronoUnit.DAYS.between(startDate, endDate) > 3660) {
+            dateError = "Ngày bắt đầu phải trước hoặc bằng ngày kết thúc; khoảng thống kê tối đa 10 năm.";
+            startDate = today.minusMonths(1); endDate = today;
+        }
+        var revenues = orderService.getRevenueByDay(startDate, endDate);
         NumberFormat numberFormat = NumberFormat.getInstance(Locale.US); // Chọn định dạng cho thị trường Mỹ
         String increase = numberFormat.format(orderService.getIncrease());
 
@@ -35,7 +46,9 @@ public class AdminController {
                 .addObject("productQuantity", productService.countProduct())
                 .addObject("orderQuantity", orderService.getCount())
                 .addObject("increase", increase)
-                .addObject("revenues", orderService.getRevenueByDay(LocalDate.now().minusMonths(1), LocalDate.now()))
+                .addObject("revenues", revenues)
+                .addObject("startDate", startDate).addObject("endDate", endDate).addObject("dateError", dateError)
+                .addObject("periodRevenue", revenues.stream().map(com.dodostore.dodostore.dto.response.DailyRevenue::getRevenue).reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add))
                 .addObject("productSales", productService.getProductSale());
     }
 }

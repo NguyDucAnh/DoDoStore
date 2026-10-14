@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"><body>
+<div th:fragment="header" class="storefront-original">
+    <header class="header">
+      <div class="container">
+        <div class="d-flex align-items-center justify-content-between">
+          <a
+            href="/home"
+            class="d-flex align-items-center text-decoration-none"
+          >
+            <img class="logo" th:src="@{/image/logo.jpg}" alt="Logo" />
+            <h1 class="header-title">DoDo Store</h1>
+          </a>
+
+          <div class="d-flex align-items-center">
+            <form
+              class="form-inline mr-3"
+              th:action="@{/home/search-name}"
+              method="post"
+              
+            >
+              <div class="input-group">
+                <input
+                  id="store-search"
+                  class="form-control"
+                  type="search"
+                  placeholder="Tìm kiếm sản phẩm..."
+                  aria-label="Search"
+                  name="name"
+                  th:value="${name}"
+                />
+                <div class="input-group-append">
+                  <button class="btn btn-custom" type="submit">
+                    <i class="fas fa-search"></i> Tìm
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            <!-- Hiển thị nút đăng nhập/đăng ký khi chưa đăng nhập -->
+            <th:block th:if="${headerUser == null}">
+              <a th:href="@{/login}" class="btn btn-custom mr-2">
+                <i class="fas fa-sign-in-alt"></i> Đăng nhập
+              </a>
+              <a th:href="@{/register}" class="btn btn-custom">
+                <i class="fas fa-user-plus"></i> Đăng ký
+              </a>
+            </th:block>
+
+            <!-- Hiển thị các nút khác khi đã đăng nhập -->
+            <th:block th:if="${headerUser != null}">
+              <div class="dropdown mr-2">
+                <button
+                  class="btn btn-custom dropdown-toggle"
+                  type="button"
+                  id="userDropdown"
+                  data-store-account
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <i class="fas fa-user"></i>
+                  <span th:text="${headerUser.username}">Tài khoản</span>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="userDropdown">
+                  <a class="dropdown-item" th:href="@{/user/info}">
+                    <i class="fas fa-user-circle"></i> Thông tin tài khoản
+                  </a>
+                  <a class="dropdown-item" th:href="@{/user/history}">
+                    <i class="fas fa-history"></i> Lịch sử đơn hàng
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <form th:action="@{/logout}" method="post" class="m-0">
+                    <button type="submit" class="dropdown-item">
+                      <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <a
+                th:href="@{/user/cart/{id}(id=${headerUser.id})}"
+                class="btn btn-custom position-relative mr-2"
+              >
+                <i class="fas fa-shopping-cart"></i> Giỏ hàng
+                <span
+                  th:text="${headerQuantity}"
+                  class="badge badge-danger position-absolute"
+                  style="top: -5px; right: -5px"
+                  >0</span
+                >
+              </a>
+            </th:block>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="nav-container">
+      <div class="container">
+        <button class="menu-toggle" data-store-menu aria-expanded="false" aria-controls="store-navigation">
+          <i class="fas fa-bars"></i> Menu
+        </button>
+        <nav id="store-navigation" class="nav nav-pills nav-justified" style="font-size: 0.9rem">
+          <a class="nav-link" href="/home#top">
+            <i class="fas fa-home"></i> Trang Chủ
+          </a>
+          <a class="nav-link" href="/home#brand">
+            <i class="fas fa-box"></i> Thương Hiệu
+          </a>
+          <a class="nav-link" href="/home#newest-products">
+            <i class="fas fa-star"></i> Mới Nhất
+          </a>
+          <a class="nav-link" href="/home#sale-products">
+            <i class="fas fa-percentage"></i> Khuyến Mãi
+          </a>
+          <a class="nav-link" href="/home#flash-sale"><i class="fas fa-bolt"></i> Flash Sale</a>
+          <a class="nav-link" th:href="@{/home/introduce}">
+            <i class="fas fa-info-circle"></i> Giới Thiệu
+          </a>
+          <a class="nav-link" th:href="@{/home/contact}">
+            <i class="fas fa-phone"></i> Liên Hệ
+          </a>
+        </nav>
+      </div>
+    </div>
+
+<script src="/js/web/storefront-header.js" defer></script>
+</div></body></html>

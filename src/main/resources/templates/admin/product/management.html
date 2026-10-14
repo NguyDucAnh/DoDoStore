@@ -10,6 +10,7 @@
     />
     <link rel="stylesheet" th:href="@{/css/sidebar.css}" />
     <link rel="stylesheet" th:href="@{/css/productManagement.css}" />
+<link rel="stylesheet" href="/css/admin/enhancements.css" />
 </head>
 <body>
     <div class="container">
@@ -45,16 +46,23 @@
             </div>
         </div>
 
+        <a href="/admin/flash-sale" class="nav-link"><i class="fas fa-bolt"></i><span>Chiến Dịch Flash Sale</span></a>
         <a href="/admin/order" class="nav-link">
             <i class="fas fa-shopping-cart"></i><span>Quản Lý Đơn Hàng</span>
         </a>
-    </nav>
+      <form th:action="@{/logout}" method="post" class="admin-logout-form">
+            <button type="submit" class="admin-logout-btn">
+              <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+              <span>Đăng xuất</span>
+            </button>
+          </form>
+        </nav>
 
     <div class="main-content">
         <div class="header">
             <h1>Quản Lý Sản Phẩm</h1>
             <div class="header-actions">
-                <!-- Thêm form tìm kiếm này vào sau <div class="product-view-selector"> và trước form upload Excel -->
+                <!-- Tìm kiếm sản phẩm -->
                 <form method="get" style="display: flex; align-items: center; margin: 0 10px;">
                     <div class="search-box">
                         <input type="text"
@@ -78,19 +86,6 @@
                         <option value="deleted">Sản phẩm đã xóa gần đây</option>
                     </select>
                 </div>
-                <!-- Upload Excel Button -->
-                <form
-                        th:action="@{/admin/product/add/upload}"
-                        method="post"
-                        enctype="multipart/form-data"
-                        style="display: flex; align-items: center; margin: 0;"
-                >
-                    <label for="excelFile" class="upload-excel-btn" style="cursor: pointer; margin: 0;">
-                        <i class="fas fa-file-excel"></i> Tạo qua Excel
-                    </label>
-                    <input type="file" id="excelFile" name="file" accept=".xlsx,.xls"
-                           style="display: none;" onchange="this.form.submit()" />
-                </form>
                 <!-- Create Product Button -->
                 <button class="btn create-btn" onclick="openCreateModal()">
                     <i class="fas fa-plus"></i>
@@ -430,26 +425,49 @@
                                 <input type="text" th:field="*{name}" required />
                             </div>
                             <div class="modal-form-group">
-                                <label><i class="fas fa-palette"></i> Màu sắc</label>
-                                <input type="text" th:field="*{color}" required />
+                                <label><i class="fas fa-palette"></i> Màu sắc đang bán (cách nhau bằng dấu phẩy)</label>
+                                <input type="text" th:field="*{color}" required maxlength="255" placeholder="Đen,Trắng,Xanh navy" />
                             </div>
                         </div>
-
                         <div class="modal-form-row">
+                            <div class="modal-form-group">
+                                <label><i class="fas fa-ruler"></i> Size đang bán (cách nhau bằng dấu phẩy)</label>
+                                <input type="text"
+                                       th:field="*{sizes}"
+                                       required
+                                       maxlength="255"
+                                       placeholder="S,M,L,XL hoặc 38,39,40 hoặc FREESIZE" />
+                            </div>
+                        </div>
+                        <fieldset class="enhancement-panel size-stock-editor">
+ <legend><i class="fas fa-boxes" aria-hidden="true"></i> Tồn kho theo màu và size</legend>
+ <input type="hidden" name="sizeStock" value="">
+ <input type="hidden" name="variantStock" value=""><p class="enhancement-notice">Nhập tồn kho theo từng màu và size. Nhập 0 cho lựa chọn không bán; tổng số lượng được tính tự động.</p>
+ <div data-size-stock-rows></div>
+ <small>Tổng tồn kho bằng tổng số lượng của tất cả các cặp màu–size. Mỗi lựa chọn có tồn kho riêng.</small>
+</fieldset>
+<fieldset class="enhancement-panel sale-editor">
+ <legend><i class="fas fa-bolt" aria-hidden="true"></i> Flash sale</legend>
+ <label>Giảm giá (%) — nhập 0 để tắt <input type="number" name="flashSaleDiscount" min="0" max="99" value="0"></label>
+ <label>Bắt đầu (giờ Việt Nam) <input type="datetime-local" name="flashSaleStart" ></label>
+ <label>Kết thúc (giờ Việt Nam) <input type="datetime-local" name="flashSaleEnd" ></label>
+ <p>Trong thời gian flash sale, áp dụng mức giảm cao hơn giữa giảm giá thường và flash sale, không cộng dồn.</p>
+</fieldset>
+<div class="modal-form-row">
                             <div class="modal-form-group">
                                 <label><i class="fas fa-tag"></i> Giá(Vnđ)</label>
                                 <input type="number" th:field="*{price}" required />
                             </div>
                             <div class="modal-form-group">
-                                <label><i class="fas fa-percent"></i> Giảm giá(%)abel>
+                                <label><i class="fas fa-percent"></i> Giảm giá(%)</label>
                                 <input type="number" th:field="*{discount}" required />
                             </div>
                         </div>
 
                         <div class="modal-form-row">
                             <div class="modal-form-group">
-                                <label><i class="fas fa-cubes"></i> Số lượng</label>
-                                <input type="number" th:field="*{quantity}" required />
+                                <label><i class="fas fa-cubes"></i> Tổng tồn kho (tự động)</label>
+                                <input type="number" data-stock-total readonly aria-readonly="true" title="Tự động cộng số lượng của các size; không nhập thủ công" value="0" />
                             </div>
                             <div class="modal-form-group">
                                 <label><i class="fas fa-align-left"></i> Mô tả</label>
@@ -474,4 +492,6 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script th:src="@{/js/productManagement.js}"></script>
+<script src="/js/admin/size-stock.js"></script>
 </body>
+</html>

@@ -31,6 +31,8 @@ public interface OrderService {
     // Get Order By UserId
     List<OrderResponse> historyBuy(Long userId);
 
+    void confirmReceived(Long userId, Long orderId);
+
     // Update Status Order
     void updateStatusOrder(Long orderId, StatusOrderEnum status);
 

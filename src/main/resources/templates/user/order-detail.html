@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chi tiết đơn hàng | DoDo Store</title>
+<link rel="stylesheet" th:href="@{/css/web/order-detail.css}"><link rel="stylesheet" th:href="@{/css/web/chatbot.css}">
+</head><body>
+<main class="order-detail-page">
+<a class="order-back" th:href="@{/user/history}">← Lịch sử mua hàng</a>
+<section class="order-detail-card">
+<header class="order-detail-heading"><div><span class="order-eyebrow">THÔNG TIN MUA HÀNG</span><h1>Đơn hàng #<span th:text="${order.id}"></span></h1><p>Thời gian đặt: <strong th:text="${order.placedAt}"></strong></p></div>
+<span class="order-status" th:attr="data-status=${order.statusCode}" th:text="${order.status}"></span></header>
+<div class="order-items">
+<article class="order-detail-item" th:each="item : ${order.items}">
+<img th:if="${item.image != null and !#strings.isEmpty(item.image)}" th:src="${item.image}" th:alt="${item.name}" loading="lazy">
+<div th:unless="${item.image != null and !#strings.isEmpty(item.image)}" class="order-image-empty">Chưa có ảnh</div>
+<div class="order-item-info"><a th:if="${item.productId != null}" th:href="@{/home/product/{id}(id=${item.productId})}" th:text="${item.name}"></a><strong th:if="${item.productId == null}" th:text="${item.name}"></strong>
+<p><span th:text="'Màu: ' + ${item.color ?: 'Chưa ghi nhận'}"></span><span th:text="'Size: ' + ${item.size ?: 'Chưa ghi nhận'}"></span></p>
+<p>Số lượng mua: <strong th:text="${item.quantity}"></strong></p></div>
+<div class="order-item-total"><span>Thành tiền</span><strong th:text="${#numbers.formatInteger(item.total ?: 0,1,'COMMA')} + ' Vnđ'"></strong></div>
+</article>
+<p th:if="${#lists.isEmpty(order.items)}">Không có thông tin sản phẩm trong đơn hàng này.</p>
+</div>
+<footer class="order-grand-total"><span>Tổng tiền đơn hàng</span><strong th:text="${#numbers.formatInteger(order.total ?: 0,1,'COMMA')} + ' Vnđ'"></strong></footer>
+</section></main><th:block th:replace="~{fragments/chatbot :: widget}"></th:block></body></html>

@@ -15,7 +15,7 @@
     <style>
       /* Base styles */
       body {
-        background-color: #f8f9fa;
+        background-color: #f7f7f7;
         padding: 20px 0;
       }
 
@@ -42,7 +42,7 @@
         width: 150px;
         height: 150px;
         border-radius: 50%;
-        border: 3px solid #3498db;
+        border: 3px solid #111111;
         padding: 3px;
         object-fit: cover;
       }
@@ -50,7 +50,7 @@
       .username {
         font-size: 1rem;
         font-weight: 600;
-        color: #2c3e50;
+        color: #202020;
         margin-top: 5px;
       }
 
@@ -99,7 +99,7 @@
         height: 150px;
         object-fit: cover;
         border-radius: 50%;
-        border: 3px solid #3498db;
+        border: 3px solid #111111;
       }
 
       .image-upload-overlay {
@@ -122,7 +122,7 @@
       }
 
       .upload-btn {
-        background: #3498db;
+        background: #111111;
         color: white;
         padding: 6px 15px;
         border-radius: 20px;
@@ -134,7 +134,7 @@
       }
 
       .upload-btn:hover {
-        background: #2980b9;
+        background: #333333;
         transform: translateY(-2px);
       }
 
@@ -173,7 +173,7 @@
 
       .address-form {
         display: none;
-        background: #f8f9fa;
+        background: #f7f7f7;
         padding: 20px;
         border-radius: 10px;
         margin-bottom: 20px;
@@ -199,7 +199,7 @@
       }
 
       .address-card {
-        background: #f8f9fa;
+        background: #f7f7f7;
         border-radius: 10px;
         padding: 15px;
         margin-bottom: 15px;
@@ -235,12 +235,12 @@
       }
 
       .btn-edit-address {
-        background: #3498db;
+        background: #111111;
         color: white;
       }
 
       .btn-delete-address {
-        background: #e74c3c;
+        background: #d30000;
         color: white;
       }
 
@@ -297,7 +297,7 @@
 
       /* Back to home button */
       .back-home {
-        color: #3498db;
+        color: #111111;
         text-decoration: none;
         font-weight: 600;
         display: inline-block;
@@ -310,14 +310,14 @@
       }
 
       .back-home:hover {
-        color: #2980b9;
+        color: #333333;
         transform: translateX(-5px);
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
       }
 
       /* Profile section enhancements */
       .profile-title {
-        color: #2c3e50;
+        color: #202020;
         font-size: 24px;
         font-weight: 700;
         margin-bottom: 25px;
@@ -332,7 +332,7 @@
         left: 0;
         width: 100%;
         height: 3px;
-        background: linear-gradient(to right, #3498db, #2980b9);
+        background: #111111;
         border-radius: 2px;
       }
 
@@ -342,7 +342,7 @@
       }
 
       .info-group label {
-        color: #34495e;
+        color: #303030;
         font-weight: 600;
         margin-bottom: 8px;
         display: block;
@@ -357,8 +357,8 @@
       }
 
       .form-control:focus {
-        border-color: #3498db;
-        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        border-color: #111111;
+        box-shadow: 0 0 0 0.2rem rgba(17, 17, 17, 0.25);
       }
 
       /* Button styling */
@@ -378,7 +378,7 @@
       }
 
       .btn-edit {
-        background: linear-gradient(135deg, #3498db, #2980b9);
+        background: #111111;
         color: white;
       }
 
@@ -388,7 +388,7 @@
       }
 
       .btn-cancel {
-        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        background: linear-gradient(135deg, #d30000, #a60000);
         color: white;
       }
 
@@ -399,7 +399,7 @@
 
       /* Address section styling */
       .section-title {
-        color: #2c3e50;
+        color: #202020;
         font-size: 22px;
         font-weight: 700;
         margin-bottom: 0;
@@ -446,7 +446,7 @@
       }
 
       .city-district {
-        color: #2c3e50;
+        color: #202020;
         font-weight: 600;
         font-size: 15px;
       }
@@ -470,12 +470,12 @@
       }
 
       .btn-edit-address {
-        background: linear-gradient(135deg, #3498db, #2980b9);
+        background: #111111;
         color: white;
       }
 
       .btn-delete-address {
-        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        background: linear-gradient(135deg, #d30000, #a60000);
         color: white;
       }
 
@@ -527,7 +527,7 @@
 
       .address-full i,
       .phone-number i {
-        color: #3498db;
+        color: #111111;
         width: 20px;
       }
 
@@ -556,8 +556,17 @@
         padding: 8px;
       }
     </style>
-  </head>
-  <body>
+      <link rel="stylesheet" th:href="@{/css/web/torano-theme.css}" href="/css/web/torano-theme.css" />
+    <link rel="stylesheet" th:href="@{/css/web/chatbot.css}" />
+<link rel="stylesheet" href="/css/web/storefront-header.css" th:href="@{/css/web/storefront-header.css}" />
+<link rel="stylesheet" href="/css/web/header.css" />
+<link rel="stylesheet" href="/css/web/nav.css" />
+<link rel="stylesheet" href="/css/web/torano-theme.css" />
+<link rel="stylesheet" href="/css/web/enhancements.css" />
+</head>
+  <body class="dodo-page">
+<div th:replace="~{fragments/storefront-header :: header}"></div>
+
     <div class="container">
       <a href="/home" class="back-home">
         <i class="fas fa-arrow-left"></i> Quay về trang chủ
@@ -858,5 +867,6 @@
         document.getElementById("addressForm").reset();
       }
     </script>
-  </body>
+      <th:block th:replace="~{fragments/chatbot :: widget}"></th:block>
+</body>
 </html>

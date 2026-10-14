@@ -52,11 +52,12 @@ public class ProductRepositoryCustomerImpl implements ProductRepositoryCustomer 
             countSql.append(" AND brand_id IN (").append(brands).append(")");
         }
 
-        switch (request.getTypeSort()) {
-            case DECS_PRICE -> sql.append(" ORDER BY price DESC ");
-            case ORDER_PRICE -> sql.append(" ORDER BY price ASC ");
-            case NEW -> sql.append(" ORDER BY create_date DESC ");
-            case SALE -> sql.append(" ORDER BY discount DESC ");
+        switch (request.getTypeSort() == null ? com.dodostore.dodostore.enums.SortEnum.NOT_SORT : request.getTypeSort()) {
+            case DECS_PRICE -> sql.append(" ORDER BY price DESC, id ASC ");
+            case ORDER_PRICE -> sql.append(" ORDER BY price ASC, id ASC ");
+            case NEW -> sql.append(" ORDER BY create_date DESC, id ASC ");
+            case SALE -> sql.append(" ORDER BY discount DESC, id ASC ");
+            default -> sql.append(" ORDER BY id ASC ");
         }
 
         // Pagination

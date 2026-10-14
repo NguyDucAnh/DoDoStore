@@ -14,6 +14,8 @@ import lombok.experimental.FieldDefaults;
 public class OrderDetailResponse {
     Long id;
     Long quantity;
+    String size;
+    String color;
     Long price;
     Long discount;
     Long total;

@@ -19,6 +19,10 @@ public class OrderDetailEntity {
 
     @Column(name = "quantity")
     Long quantity;
+    @Column(name = "size", length = 30)
+    String size;
+    @Column(name = "color", length = 60)
+    String color;
 
     @Column(name = "price")
     Long price;
@@ -28,6 +32,10 @@ public class OrderDetailEntity {
 
     @Column(name = "total")
     Long total;
+
+    // Snapshot of the promotion applied at checkout; legacy orders remain null.
+    @Column(name = "flash_sale_campaign_id")
+    Long flashSaleCampaignId;
 
     @ManyToOne
     @JoinColumn(name = "product_id")

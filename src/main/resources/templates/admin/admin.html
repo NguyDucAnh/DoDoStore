@@ -322,8 +322,42 @@
             font-size: 12px;
           }
         }
+        .admin-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-logout-form {
+    margin: 0;
+    padding: 0;
+}
+
+.header-logout-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 1px solid #ddd;
+    border-radius: 50px;
+    background: white;
+    color: #333;
+    font: inherit;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.header-logout-btn:hover {
+    background: #b42318;
+    border-color: #b42318;
+    color: white;
+}
     </style>
-  </head>
+  <link rel="stylesheet" href="/css/admin/enhancements.css" />
+      <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+</head>
   <body>
     <div class="container">
         <!-- Sidebar -->
@@ -358,7 +392,8 @@
                 </div>
             </div>
 
-            <a href="/admin/order" class="nav-link">
+            <a href="/admin/flash-sale" class="nav-link"><i class="fas fa-bolt"></i><span>Chiến Dịch Flash Sale</span></a>
+        <a href="/admin/order" class="nav-link">
                 <i class="fas fa-shopping-cart"></i><span>Quản Lý Đơn Hàng</span>
             </a>
         </nav>
@@ -367,10 +402,19 @@
       <div class="main-content">
         <div class="header">
           <h1>Trang Quản Trị</h1>
-          <div class="user-info">
-            <i class="fas fa-user-circle"></i>
-            <span>Admin</span>
-          </div>
+            <div class="admin-header-actions">
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Admin</span>
+                </div>
+
+                <form th:action="@{/logout}" method="post" class="header-logout-form">
+                    <button type="submit" class="header-logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Đăng xuất
+                    </button>
+                </form>
+            </div>
         </div>
 
         <!-- Statistics Cards -->
@@ -399,8 +443,29 @@
           </div>
         </div>
 
-        <h5>Doanh Thu Theo Ngày 1 Tháng Trở Lại</h5>
-        <canvas id="revenueChart" width="100%" height="40"></canvas>
+        <section class="enhancement-panel revenue-panel">
+        <div class="enhancement-heading"><span class="enhancement-eyebrow">THỐNG KÊ</span><h5>Doanh thu theo khoảng thời gian</h5></div>
+        <form action="/admin" method="get" class="enhancement-toolbar">
+            <label>
+                Từ ngày
+                <input type="text" class="revenue-date"
+                       name="startDate" th:value="${startDate}"
+                       placeholder="Ngày/tháng/năm" required>
+            </label>
+
+            <label>
+                Đến ngày
+                <input type="text" class="revenue-date"
+                       name="endDate" th:value="${endDate}"
+                       placeholder="Ngày/tháng/năm" required>
+            </label>
+          <button type="submit">Thống kê</button>
+        </form>
+        <p th:if="${dateError}" th:text="${dateError}" role="alert" style="color:#b91c1c"></p>
+        <p class="enhancement-metric">Tổng doanh thu trong khoảng: <strong th:text="${#numbers.formatInteger(periodRevenue, 1, 'COMMA')} + ' Vnđ'"></strong></p>
+        <p class="enhancement-hint">Không tính đơn trong giỏ hàng, đơn chờ thanh toán và đơn đã hủy. Ngày không có doanh thu hiển thị 0.</p>
+        <div class="enhancement-chart"><canvas id="revenueChart"></canvas></div>
+        </section>
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script th:inline="javascript">
@@ -418,13 +483,18 @@
               datasets: [{
                 label: 'Doanh Thu (Vnđ)',
                 data: data,
-                fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
+                fill: true,
+                backgroundColor: 'rgba(17,17,17,0.05)',
+                borderColor: '#111111',
+                borderWidth: 2,
+                pointRadius: 3,
+                pointHoverRadius: 6,
+                tension: 0.3
               }]
             },
             options: {
               responsive: true,
+              maintainAspectRatio: false,
               scales: {
                 x: {
                   title: {
@@ -497,5 +567,28 @@
       });
     </script>
     <script th:src="@{/js/productManagement.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/vn.js"></script>
+
+    <script>
+        const monthNumbers = [
+            "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng6",
+            "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"
+        ];
+
+        flatpickr(".revenue-date", {
+            locale: {
+                ...flatpickr.l10ns.vn,
+                months: {
+                    shorthand: monthNumbers,
+                    longhand: monthNumbers
+                }
+            },
+            altInput: true,
+            altFormat: "d/m/Y",
+            dateFormat: "Y-m-d",
+            disableMobile: true
+        });
+    </script>
   </body>
 </html>

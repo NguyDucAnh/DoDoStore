@@ -45,6 +45,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private CartOrderService cartOrders;
 
     @Autowired
     private OrderDetailRepository orderDetailRepository;
@@ -94,6 +96,8 @@ public class UserServiceImpl implements UserService {
     // Register user
     @Override
     public UserEntity registerUser(CreateUserRequest request) {
+        if (request.getFullName() != null) request.setFullName(request.getFullName().trim());
+        if (request.getEmail() != null) request.setEmail(request.getEmail().trim().toLowerCase(java.util.Locale.ROOT));
         if(userRepository.existsByUsernameAndStatus(request.getUsername(), StatusEnum.Active)){
             throw new AppException(ErrorCode.USER_EXISTED);
         }
@@ -204,8 +208,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public String checkout(Long userId, Long addressId){
-        OrderEntity newOrder = new OrderEntity();
-
         UserEntity user = entityManager.find(UserEntity.class, userId, jakarta.persistence.LockModeType.PESSIMISTIC_WRITE);
         AddressEntity address = addressRepository.findById(addressId).orElseThrow();
         if (user == null || user.getStatus() != StatusEnum.Active || !address.getUser().getId().equals(userId))
@@ -213,6 +215,7 @@ public class UserServiceImpl implements UserService {
         List<CartEntity> checkoutItems = new ArrayList<>(cartRepository.findByUserId(userId));
         if (checkoutItems.isEmpty()) throw new IllegalArgumentException("Giỏ hàng trống");
         checkoutItems.sort(java.util.Comparator.comparing(c -> c.getProduct().getId()));
+        OrderEntity newOrder = cartOrders.submit(user);
         newOrder.setUser(user);
         orderRepository.save(newOrder);
         List<OrderDetailEntity> orderDetails = new ArrayList<>();
@@ -220,6 +223,7 @@ public class UserServiceImpl implements UserService {
         Long totalOrder = 0L;
         for(CartEntity cart : checkoutItems){
             entityManager.refresh(cart.getProduct(), jakarta.persistence.LockModeType.PESSIMISTIC_WRITE);
+            com.dodostore.dodostore.utils.ProductSizes.requireSelection(cart);
             if (cart.getQuantity() == null || cart.getQuantity() <= 0 || cart.getProduct().getStatus() != StatusEnum.Active
                     || cart.getProduct().getQuantity() < cart.getQuantity())
                 throw new IllegalArgumentException("Sản phẩm không đủ tồn kho");
@@ -227,9 +231,12 @@ public class UserServiceImpl implements UserService {
 
             item.setProduct(cart.getProduct());
             item.setQuantity(cart.getQuantity());
+            item.setSize(cart.getSize());
+            item.setColor(cart.getColor());
             item.setPrice(cart.getProduct().getPrice());
-            item.setDiscount(cart.getProduct().getDiscount());
-            item.setTotal(cart.getProduct().getPrice() * (100 - cart.getProduct().getDiscount()) * cart.getQuantity() / 100);
+            item.setDiscount(cart.getProduct().getEffectiveDiscount());
+            item.setFlashSaleCampaignId(com.dodostore.dodostore.utils.CampaignAttribution.appliedCampaign(cart.getProduct(), item.getDiscount()));
+            item.setTotal(Math.multiplyExact(Math.multiplyExact(cart.getProduct().getPrice(), 100 - item.getDiscount()) / 100, cart.getQuantity()));
             item.setOrder(newOrder);
 
             totalOrder += item.getTotal();
@@ -238,9 +245,9 @@ public class UserServiceImpl implements UserService {
             orderDetailRepository.save(item);
             
             ProductEntity product = cart.getProduct();
-            product.setQuantity(product.getQuantity() - cart.getQuantity());
+            product.reserveVariant(cart.getColor(), cart.getSize(), cart.getQuantity());
             product.setQuantitySell((product.getQuantitySell() == null ? 0 : product.getQuantitySell()) + cart.getQuantity());
-            productRepository.save(product);
+            productRepository.saveAndFlush(product);
         }
 
         newOrder.setUser(user);
@@ -249,7 +256,7 @@ public class UserServiceImpl implements UserService {
         newOrder.setDate(new Date());
         newOrder.setAddress(address.getAddress());
         newOrder.setPhone(address.getPhone());
-        newOrder.setStatus(StatusOrderEnum.Dang_Xu_Ly);
+        newOrder.setStatus(StatusOrderEnum.Dang_Giao);
 
         orderRepository.save(newOrder);
 

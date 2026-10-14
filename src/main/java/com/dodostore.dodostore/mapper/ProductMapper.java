@@ -8,6 +8,8 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
+    @org.mapstruct.Mapping(target = "discount", source = "effectiveDiscount")
+    @org.mapstruct.Mapping(target = "baseDiscount", source = "discount")
     ProductResponse toProductResponse(ProductEntity productEntity);
     ProductEntity toProductEntity(ProductRequest productRequest);
     void updateProductEntity(@MappingTarget ProductEntity productEntity, ProductRequest productRequest);

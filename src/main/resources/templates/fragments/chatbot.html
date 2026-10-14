@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="widget">
+    <input th:if="${_csrf != null}" type="hidden" id="chatCsrf" th:value="${_csrf.token}" th:attr="data-header=${_csrf.headerName}">
+    <!-- Chatbot Widget -->
+    <div class="chat-widget">
+      <input type="hidden" id="currentUserId" th:value="${user != null ? user.id : ''}" />
+      <button type="button" class="chat-button" id="chatButton" aria-label="Mở trò chuyện" aria-controls="chatBox" aria-expanded="false">
+        <span aria-hidden="true">💬</span>
+      </button>
+      <div class="chat-box" id="chatBox">
+        <div class="chat-header">
+          <h4><span aria-hidden="true">🤖</span> DoDo AI Assistant</h4>
+          <button type="button" class="chat-close" id="chatClose">&times;</button>
+        </div>
+        <section class="chat-history-panel" aria-label="Lịch sử trò chuyện">
+          <div class="chat-history-heading"><strong></strong></div>
+          <p id="chatHistoryStatus" role="status">Lịch sử sẽ tự tải khi mở chatbot.</p>
+        </section>
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-message bot">Xin chào! Tôi có thể giúp gì cho bạn hôm nay?</div>
+        </div>
+        <div class="chat-typing" id="chatTyping">AI đang trả lời...</div>
+        <div class="chat-input-container">
+          <input type="text" id="chatInput" placeholder="Nhập tin nhắn..." />
+          <button type="button" id="chatSend">Gửi</button>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" async></script>
+    <script th:src="@{/js/web/chatbot.js(v='20260924-scroll-history')}" defer></script>
+</th:block>
+</body>
+</html>

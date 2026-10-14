@@ -15,6 +15,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
     @Query(value = "SELECT DATE(o.date) AS date, SUM(o.total) AS revenue " +
                "FROM orders o WHERE o.date BETWEEN :startDate AND :endDate " +
+               "AND (o.cart_draft IS NULL OR o.cart_draft = false) " +
                "AND o.status_order NOT IN ('Cho_Thanh_Toan', 'Da_Huy') " +
                "GROUP BY DATE(o.date) " +
                "ORDER BY DATE(o.date) ASC", nativeQuery = true)

@@ -41,9 +41,11 @@ public class OrderDetailServiceImpl implements OrderDetailService{
             OrderEntity order = orderRepository.findById(orderId).get();
 
             newItem.setQuantity(cart.getQuantity());
-            newItem.setDiscount(product.getDiscount());
+            newItem.setSize(cart.getSize());
+            newItem.setColor(cart.getColor());
+            newItem.setDiscount(product.getEffectiveDiscount());
             newItem.setPrice(product.getPrice());
-            newItem.setTotal((product.getPrice() * (100 - product.getDiscount()) / 100) * cart.getQuantity());
+            newItem.setTotal((product.getPrice() * (100 - product.getEffectiveDiscount()) / 100) * cart.getQuantity());
             newItem.setProduct(product);
             newItem.setOrder(order);
 

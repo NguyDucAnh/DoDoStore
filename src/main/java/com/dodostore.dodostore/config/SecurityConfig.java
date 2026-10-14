@@ -18,7 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private final String[] PUBLIC_URLS = {"/css/**", "/js/**", "/image/**","/home/**", "/login", "/register"};
+    private final String[] PUBLIC_URLS = {"/css/**", "/js/**", "/image/**","/home/**", "/login", "/register", "/api/v1/chat", "/api/v1/chat/**", "/error"};
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -71,7 +71,9 @@ public class SecurityConfig {
                 // Protect payment and logout POSTs; retain compatibility with legacy AJAX forms.
                 .csrf(csrf -> csrf.requireCsrfProtectionMatcher(request ->
                         (java.util.Set.of("/payment/vnpay/create", "/logout").contains(request.getServletPath())
-                        || request.getServletPath().startsWith("/user/cart/quantity/"))
+                        || request.getServletPath().startsWith("/api/v1/chat")
+                        || request.getServletPath().startsWith("/user/cart/quantity/")
+                        || request.getServletPath().matches("/user/orders/[^/]+/received"))
                         && !java.util.Set.of("GET", "HEAD", "OPTIONS", "TRACE").contains(request.getMethod())));
 
         return http.build();

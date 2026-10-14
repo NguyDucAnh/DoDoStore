@@ -15,11 +15,11 @@
     <style>
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: #f5f7fa;
+        background: #f7f7f7;
       }
       
       .header {
-        background: linear-gradient(135deg, #2c3e50, #3498db);
+        background: #111111;
         padding: 15px 0;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
@@ -47,7 +47,7 @@
       .contact-icon {
         width: 60px;
         height: 60px;
-        background: #3498db;
+        background: #111111;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -76,11 +76,11 @@
 
       .form-control:focus {
         box-shadow: none;
-        border-color: #3498db;
+        border-color: #111111;
       }
 
       .btn-submit {
-        background: #3498db;
+        background: #111111;
         color: white;
         padding: 12px 30px;
         border-radius: 25px;
@@ -90,7 +90,7 @@
       }
 
       .btn-submit:hover {
-        background: #2980b9;
+        background: #333333;
         transform: translateY(-2px);
       }
 
@@ -113,14 +113,14 @@
       }
 
       .section-title h2 {
-        color: #2c3e50;
+        color: #202020;
         font-size: 32px;
         font-weight: 700;
         margin-bottom: 20px;
       }
 
       .section-title p {
-        color: #7f8c8d;
+        color: #666666;
         font-size: 16px;
         max-width: 600px;
         margin: 0 auto;
@@ -137,7 +137,7 @@
       .social-links a {
         width: 40px;
         height: 40px;
-        background: #3498db;
+        background: #111111;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -148,7 +148,7 @@
 
       .social-links a:hover {
         transform: translateY(-3px);
-        background: #2980b9;
+        background: #333333;
       }
 
       /* Responsive */
@@ -172,7 +172,7 @@
         position: fixed;
         top: 20px;
         left: 20px;
-        background: #3498db;
+        background: #111111;
         color: white;
         width: 45px;
         height: 45px;
@@ -187,7 +187,7 @@
       }
 
       .back-button:hover {
-        background: #2980b9;
+        background: #333333;
         transform: translateY(-2px);
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         color: white;
@@ -198,8 +198,17 @@
         font-size: 20px;
       }
     </style>
-  </head>
-  <body>
+      <link rel="stylesheet" th:href="@{/css/web/torano-theme.css}" href="/css/web/torano-theme.css" />
+    <link rel="stylesheet" th:href="@{/css/web/chatbot.css}" />
+<link rel="stylesheet" href="/css/web/storefront-header.css" th:href="@{/css/web/storefront-header.css}" />
+<link rel="stylesheet" href="/css/web/header.css" />
+<link rel="stylesheet" href="/css/web/nav.css" />
+<link rel="stylesheet" href="/css/web/torano-theme.css" />
+<link rel="stylesheet" href="/css/web/enhancements.css" />
+</head>
+  <body class="dodo-page">
+<div th:replace="~{fragments/storefront-header :: header}"></div>
+
     <a href="/home" class="back-button">
       <i class="fas fa-arrow-left"></i>
     </a>
@@ -297,5 +306,6 @@
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+      <th:block th:replace="~{fragments/chatbot :: widget}"></th:block>
+</body>
 </html>

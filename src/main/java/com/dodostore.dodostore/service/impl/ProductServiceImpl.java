@@ -29,6 +29,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
+    @jakarta.persistence.PersistenceContext
+    private jakarta.persistence.EntityManager em;
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
     private final BrandRepository brandRepository;
@@ -80,12 +82,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public ProductResponse createProduct(ProductRequest productRequest) {
         if(productRepository.existsByNameAndStatus(productRequest.getName(), StatusEnum.Active)){
             throw new  AppException(ErrorCode.ENTITY_EXIST);
         }
 
         ProductEntity newProduct = productMapper.toProductEntity(productRequest);
+        newProduct.setColor(com.dodostore.dodostore.utils.ProductColors.normalize(productRequest.getColor()));
+        newProduct.setSizes(com.dodostore.dodostore.utils.ProductSizes.normalize(productRequest.getSizes()));
+        applyStockAndSale(newProduct, productRequest);
         newProduct.setCreateDate(new Date());
         newProduct.setStatus(StatusEnum.Active);
 
@@ -99,13 +105,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public ProductResponse updateProduct(Long productId, ProductRequest request) {
-        if(productRepository.existsByNameAndStatus(request.getName(), StatusEnum.Active)){
+        if(request.getName() != null && !request.getName().isBlank()
+                && productRepository.existsByNameAndStatusAndIdNot(request.getName(), StatusEnum.Active, productId)){
             throw new  AppException(ErrorCode.ENTITY_EXIST);
         }
 
         ProductEntity updatedProduct = productRepository.findByIdAndStatus(productId, StatusEnum.Active);
 
+        em.refresh(updatedProduct, jakarta.persistence.LockModeType.PESSIMISTIC_WRITE);
         if(request.getName() != null && !request.getName().isEmpty()){
             updatedProduct.setName(request.getName());
         }
@@ -116,20 +125,43 @@ public class ProductServiceImpl implements ProductService {
             updatedProduct.setDiscount(request.getDiscount());
         }
         if(request.getColor() != null && !request.getColor().isEmpty()){
-            updatedProduct.setColor(request.getColor());
-        }
-        if(request.getQuantity() != null){
-            updatedProduct.setQuantity(request.getQuantity());
+            updatedProduct.setColor(com.dodostore.dodostore.utils.ProductColors.normalize(request.getColor()));
         }
         if(request.getDescription() != null && !request.getDescription().isEmpty()){
             updatedProduct.setDescription(request.getDescription());
         }
 
+        if (request.getSizes() != null) updatedProduct.setSizes(com.dodostore.dodostore.utils.ProductSizes.normalize(request.getSizes()));
+        applyStockAndSale(updatedProduct, request);
         updatedProduct.setUpdateDate(new Date());
 
         productRepository.save(updatedProduct);
 
         return productMapper.toProductResponse(updatedProduct);
+    }
+
+    private void applyStockAndSale(ProductEntity p, ProductRequest request) {
+        String variants = request.getVariantStock() == null ? p.getVariantStock() : request.getVariantStock();
+        if (variants != null && !variants.isBlank()) {
+            p.setVariantStock(com.dodostore.dodostore.utils.VariantStock.validate(p.getColor(), p.getSizes(), variants));
+            p.setSizeStock(com.dodostore.dodostore.utils.VariantStock.sizeTotals(p.getVariantStock()));
+            p.setQuantity(com.dodostore.dodostore.utils.VariantStock.total(p.getVariantStock()));
+        } else {
+            String stock = request.getSizeStock() == null ? p.getSizeStock() : request.getSizeStock();
+            p.setSizeStock(com.dodostore.dodostore.utils.SizeStock.validate(p.getSizes(), stock));
+            p.setQuantity(com.dodostore.dodostore.utils.SizeStock.total(p.getSizeStock()));
+        }
+        if (request.getFlashSaleDiscount() != null) {
+            com.dodostore.dodostore.utils.FlashSale.validate(request.getFlashSaleDiscount(), request.getFlashSaleStart(), request.getFlashSaleEnd());
+            if (!java.util.Objects.equals(p.getFlashSaleDiscount(), request.getFlashSaleDiscount())
+                    || !java.util.Objects.equals(p.getFlashSaleStart(), request.getFlashSaleStart())
+                    || !java.util.Objects.equals(p.getFlashSaleEnd(), request.getFlashSaleEnd())) p.setFlashSaleCampaign(null);
+            p.setFlashSaleDiscount(request.getFlashSaleDiscount());
+            p.setFlashSaleStart(request.getFlashSaleStart());
+            p.setFlashSaleEnd(request.getFlashSaleEnd());
+        }
+        if (p.getPrice() == null || p.getPrice() <= 0 || p.getDiscount() == null || p.getDiscount() < 0 || p.getDiscount() > 99)
+            throw new IllegalArgumentException("Giá phải lớn hơn 0, giảm giá thường từ 0–99%.");
     }
 
     @Override
